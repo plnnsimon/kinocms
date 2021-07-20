@@ -1,32 +1,51 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+  <div>
+    <NavBar v-if="isLoggedIn" />
+    <SideBar v-if="isLoggedIn" />
+    <router-view class="content-wrapper" />
   </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import NavBar from "./components/NavBar";
+import SideBar from "./components/SideBar";
+import firebase from "firebase/app";
+import "firebase/auth";
 
-#nav {
-  padding: 30px;
-}
+export default {
+  components: {
+    NavBar,
+    SideBar,
+  },
+  mounted() {
+    this.setupFirebase();
+  },
+  methods: {
+    setupFirebase() {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          // User is signed in.
+          console.log("signed in");
+          this.isLoggedIn = true;
+        } else {
+          // No user is signed in.
+          this.isLoggedIn = false;
+          console.log("signed out", this.isLoggedIn);
+          this.$router.replace({name: "Login"})
+        }
+      });
+    },
+  },
+  data() {
+    return {
+      isLoggedIn: false,
+    };
+  },
+};
+</script>
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+<style scoped>
+.content {
+  padding: 10px;
 }
 </style>

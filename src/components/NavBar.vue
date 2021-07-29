@@ -18,7 +18,7 @@
       <p>Administrator</p>
       <li class="nav-item">
         <a
-          @click="signOut"
+          @click="onSignOut"
           class="nav-link"
           data-widget="navbar-search"
           href="#"
@@ -32,37 +32,13 @@
 </template>
 
 <script>
-import firebase from "firebase/app";
-import "firebase/auth";
-
+// import {mapGetters} from 'vuex'
 export default {
   name: "NavBar",
-  props: ["isLoggedIn"],
-  // created() {
-  //   firebase.auth().onAuthStateChanged(user => {
-  //     // this.isLoggedIn = !!user
-  //     if (user) {
-  //       this.isLoggedIn = true
-  //       this.$router.replace({name: "Stats"})
-  //     } else {
-  //       this.isLoggedIn = false
-  //       // this.$router.replace({name: "Login"})
-  //     }
-  //   })
-  // },
+  // computed: mapGetters(['loading']),
   methods: {
-    async signOut() {
-        try{
-          const data = await firebase.auth().signOut()
-          console.log(data);
-          let isLogged = !this.isLoggedIn
-          this.$emit('signetOut', isLogged)
-          this.$router.replace({name: "Login"})
-          console.log("signet out");
-        } catch(err) {
-          console.log(err);
-        }
-      
+    onSignOut() {
+      this.$store.dispatch("signOut")
     }
   }
 };

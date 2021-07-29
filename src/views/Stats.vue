@@ -1,54 +1,53 @@
 <template>
-  <div class="d-flex flex-column p-4">
-    <div class="row pb-lg-3">
-      <!-- first dropdown -->
-      <div class="col-2">
-        <p>Основной параметр:</p>
-        <div class="dropdown">
-          <button
-            class="btn btn-secondary dropdown-toggle"
-            type="button"
-            id="dropdownMenuButton1"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Лучшие каналы
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
+  <div v-if="isLoggedIn" class="">
+    <div class="top-section">
+      <div class="piechart-section">
+        <div class="dropdowns">
+          <!-- first dropdown -->
+          <div class="">
+            <p>Основной параметр:</p>
+            <div class="dropdown">
+              <button
+                class="btn btn-secondary dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton1"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Лучшие каналы
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- second dropdown -->
+          <div class="">
+            <p>Конверсия:</p>
+            <div class="dropdown">
+              <button
+                class="btn btn-secondary dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton1"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Цель 1: Заявка консультация
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
-      <!-- second dropdown -->
-      <div class="col-3">
-        <p>Конверсия:</p>
-        <div class="dropdown">
-          <button
-            class="btn btn-secondary dropdown-toggle"
-            type="button"
-            id="dropdownMenuButton1"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Цель 1: Заявка консультация
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="col d-flex align-items-end">
-        <a href="#">Изменение группы каналов</a>
-      </div>
-    </div>
-
-    <!-- Channels -->
-    <div class="row">
-      <div class="col-5">
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Лучшие каналы</h3>
@@ -71,11 +70,11 @@
             </div>
           </div>
           <div class="card-body">
-            <div class="row">
-              <div class="col-md-8">
+            <div class="piechart-body">
+              <div class="">
                 <PieChart />
               </div>
-              <div class="col-md-4">
+              <div class="piechart-ul">
                 <ul class="chart-legend clearfix">
                   <li><i class="far fa-circle text-danger"></i> Display</li>
                   <li>
@@ -94,40 +93,47 @@
           </div>
         </div>
       </div>
-      <!-- Channels end -->
-      <!-- Seances -->
-      <div class="col-4">
-        <div class="card card-info">
-          <div class="card-header">
-            <h3 class="card-title">Сеансы</h3>
 
-            <div class="card-tools">
-              <button
-                type="button"
-                class="btn btn-tool"
-                data-card-widget="collapse"
-              >
-                <i class="fas fa-minus"></i>
-              </button>
-              <button
-                type="button"
-                class="btn btn-tool"
-                data-card-widget="remove"
-              >
-                <i class="fas fa-times"></i>
-              </button>
+      <!-- Channels -->
+      <div class="linechart-section">
+        <div class="">
+          <a href="#">Изменение группы каналов</a>
+        </div>
+        <div class="col-5"></div>
+        <!-- Channels end -->
+        <!-- Seances -->
+        <div class="">
+          <div class="card card-info">
+            <div class="card-header">
+              <h3 class="card-title">Сеансы</h3>
+
+              <div class="card-tools">
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="collapse"
+                >
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-tool"
+                  data-card-widget="remove"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="card-body">
-            <div class="chart">
-              <LineChart />
+            <div class="card-body">
+              <div class="chart">
+                <LineChart />
+              </div>
             </div>
           </div>
         </div>
+        <!-- Seances end -->
       </div>
-      <!-- Seances end -->
-
-      <div class="col">
+      <div class="users">
         <!-- small box -->
         <div class="small-box bg-warning">
           <div class="inner">
@@ -142,9 +148,10 @@
         <p class="text-center">Зарегестрированные пользователи</p>
       </div>
     </div>
-    <section class="col p-0">
-      <div class="row">
-        <div class="col-1">
+
+    <section class="bottom-section">
+      <div class="bottom-section-header">
+        <div class="">
           <div class="dropdown">
             <button
               class="btn btn-secondary dropdown-toggle"
@@ -220,6 +227,7 @@
 import PieChart from "../charts/PieChart";
 import LineChart from "../charts/LineChart";
 import SeancesGraph from "../charts/SeancesGraph";
+import { mapGetters } from "vuex";
 
 export default {
   name: "Stats",
@@ -228,12 +236,57 @@ export default {
     LineChart,
     SeancesGraph,
   },
+  computed: mapGetters(["isLoggedIn"]),
   methods: {},
 };
 </script>
 
 <style scoped>
+.top-section {
+  display: flex;
+  flex-flow: row wrap;
+}
 .card {
   width: 100%;
 }
+.piechart-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+  margin: 10px;
+}
+.dropdowns {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.linechart-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 10px;
+}
+
+.users {
+  margin: 15px;
+}
+.piechart-ul ul {
+  display: flex;
+  flex-flow: row wrap;
+}
+.piechart-ul ul li {
+  margin: 5px;
+}
+.bottom-section {
+  margin: 15px;
+}
+.bottom-section-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  max-width: 200px;
+  width: 100%;
+}
+
 </style>

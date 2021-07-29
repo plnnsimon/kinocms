@@ -1,5 +1,6 @@
 <template>
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <aside :loading="loading" class="main-sidebar sidebar-dark-primary elevation-4">
+    
     <a href="index3.html" class="brand-link">
       <img
         src="dist/img/AdminLTELogo.png"
@@ -29,11 +30,19 @@
               <p>Баннера/Слайдеры</p>
             </router-link>
           </li>
-          <li class="nav-item">
+          <li @mouseenter="dropDown = true"  @mouseleave="dropDown = false" class="nav-item" :class="{'menu-is-opening menu-open': dropDown}" >
             <router-link :to="{ name: 'Movies' }" class="nav-link">
               <i class="far fa-circle"></i>
-              <p>Фильмы</p>
+              <p>Фильмы <i class="fas fa-angle-left right"></i></p>
             </router-link>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link :to="{ name: 'MoviePage' }" class="nav-link">
+                  <i class="far fa-circle"></i>
+                  <p>Страница Фильма</p>
+                </router-link>
+              </li>
+            </ul>
           </li>
           <li class="nav-item">
             <router-link :to="{ name: 'Cinemas' }" class="nav-link">
@@ -80,6 +89,14 @@
 <script>
 export default {
   name: "SideBar",
+  components: {
+  },
+  props: ['loading'],
+  data() {
+    return {
+      dropDown: false
+    }
+  }
 };
 </script>
 

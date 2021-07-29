@@ -1,19 +1,80 @@
 <template>
   <div class="banners">
-    <h2 style="margin: 0 auto;">На главной верх</h2>
-    <div class="first-banners-section">
-      <div style="marginbottom: 20px; padding: 10px">
+    <h2>На главной верх</h2>
+    <div class="banners-section">
+      <div style="marginbottom: 20px; padding: 55px 10px 10px">
         <div class="banners-container">
-          <Banner
-            :banners="banners"
+          <div class="loading">
+            <Spinner v-if="loading" />
+          </div>
+
+          <MainBanners
+            :storeBanners="storeBanners"
             :banner="banner"
-            v-for="(banner, index) of banners"
+            v-for="(banner, index) of storeBanners"
             :key="index"
           />
+
+          <div v-if="message">
+            <p>No banners yet, try to add one</p>
+          </div>
         </div>
-        <button @click="onAdd()" class="btn btn-dark">Add Banner</button>
+        <button @click="onAdd" class="btn btn-dark">Add Banner</button>
+      </div>
+      <div class="speed">
+        <p>Скорость вращения</p>
+        <select name="" id="">
+          <option value="5s" selected>5s</option>
+          <option value="10s">10s</option>
+          <option value="15s">15s</option>
+          <option value="20s">20s</option>
+        </select>
       </div>
       <button @click="onSave" class="btn btn-dark">Save</button>
+      <div class="switcher">
+        <label class="switch">
+          <input type="checkbox" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+    <h2>Сквозной баннер на заднем фоне</h2>
+    <div class="banners-section">
+      <ThroughBanner />
+    </div>
+    <h2>На главной Новости Акции</h2>
+    <div class="banners-section">
+      <div
+        class="banners-container"
+        style="marginbottom: 20px; padding: 50px 10px 10px"
+      >
+        <div class="loading">
+          <Spinner v-if="loading" />
+        </div>
+        <NewsDiscountBanners
+          :storeNDBanners="storeNDBanners"
+          :banner="banner"
+          v-for="(banner, index) of storeNDBanners"
+          :key="index"
+        />
+        <div v-if="message">
+          <p>No banners yet, try to add one</p>
+        </div>
+      </div>
+      <button @click="onAdd2" class="btn btn-dark" style="margin-left: 10px">
+        Add Banner
+      </button>
+
+      <div class="speed">
+        <p>Скорость вращения</p>
+        <select name="" id="">
+          <option value="5s" selected>5s</option>
+          <option value="10s">10s</option>
+          <option value="15s">15s</option>
+          <option value="20s">20s</option>
+        </select>
+      </div>
+      <button @click="onSave2" class="btn btn-dark">Save</button>
       <div class="switcher">
         <label class="switch">
           <input type="checkbox" />
@@ -25,46 +86,80 @@
 </template>
 
 <script>
-import Banner from "../components/banners/Banner";
+import MainBanners from "../components/banners/MainBanners";
+import ThroughBanner from "../components/banners/ThroughBanner";
+import NewsDiscountBanners from "../components/banners/NewsDiscountBanners";
+import Spinner from "../components/Spinner.vue";
+import "firebase/storage";
 
 export default {
   name: "Banners",
   components: {
-    Banner,
+    MainBanners,
+    ThroughBanner,
+    NewsDiscountBanners,
+    Spinner,
   },
   data() {
     return {
-      banners: [],
+      message: false,
     };
   },
+  computed: {
+    storeBanners() {
+      return this.$store.getters.storeBanners;
+    },
+    storeNDBanners() {
+      return this.$store.getters.storeNDBanners;
+    },
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
   mounted() {
-    const data = localStorage.getItem("banners");
-    if (data) {
-      this.banners = JSON.parse(data);
-    }
+    this.$store.dispatch("loadBanners");
+    this.$store.dispatch("loadNDBanners");
   },
   methods: {
-    removeImage() {
-      this.banners.image = null;
-    },
     onAdd() {
-      this.banners.push({
+      const banner = {
         selectedFile: null,
         imageUrl: "",
         image: null,
         url: "",
         text: "",
-      });
+      };
+      this.$store.dispatch("addBanner", banner);
     },
     onSave() {
-      localStorage.setItem("banners", JSON.stringify(this.banners));
+      const banners = this.$store.getters.storeBanners;
+      this.$store.dispatch("onBannersSave", banners);
+      console.log("saved");
+    },
+
+    onAdd2() {
+      const banner = {
+        selectedFile: null,
+        imageUrl: "",
+        image: null,
+        url: "",
+      };
+      this.$store.dispatch("addNDBanner", banner);
+    },
+    onSave2() {
+      const banners = this.$store.getters.storeNDBanners;
+      this.$store.dispatch("onNDBannersSave", banners);
       console.log("saved");
     },
   },
+  watch: {},
 };
 </script>
 
 <style>
+h2 {
+  margin: 10px auto;
+}
 .banners {
   padding: 10px;
   display: flex;
@@ -124,7 +219,7 @@ export default {
   display: flex;
   flex-flow: wrap row;
 }
-.first-banners-section {
+.banners-section {
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -202,5 +297,25 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+.speed {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+  display: flex;
+  max-width: 220px;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.speed p {
+  margin: 0;
+}
+
+.loading {
+  position: absolute;
+  top: 20%;
+  left: 50%;
 }
 </style>

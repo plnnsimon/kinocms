@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="spinner">
       <div class="lds-dual-ring"></div>
   </div>
 </template>
@@ -11,6 +11,10 @@ export default {
 </script>
 
 <style scoped>
+.spinner {
+  position: absolute;
+  margin: 0 auto;
+}
 .lds-dual-ring {
   display: inline-block;
   width: 80px;
@@ -24,7 +28,7 @@ export default {
   margin: 8px;
   border-radius: 50%;
   border: 6px solid rgb(0, 0, 0);
-  border-color: rgb(255, 255, 255) transparent rgb(255, 255, 255) transparent;
+  border-color: rgb(0, 0, 0) transparent rgb(0, 0, 0) transparent;
   animation: lds-dual-ring 1.2s linear infinite;
 }
 @keyframes lds-dual-ring {

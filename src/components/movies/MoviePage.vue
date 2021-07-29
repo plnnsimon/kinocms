@@ -1,0 +1,311 @@
+<template>
+  <div class="movie-picture-page">
+    <div class="language">
+      <button @click="languageActive">Русский</button>
+      <button @click="languageActive">Украинский</button>
+    </div>
+    <div class="container">
+      <div class="film-name">
+        <label for="film-name">Название фильма</label>
+        <input
+          v-model="movie_page.filmName"
+          type="text"
+          id="film-name"
+          placeholder="Название фильма"
+        />
+      </div>
+      <div class="description">
+        <label for="film-description">Описание</label>
+        <textarea
+          v-model="movie_page.movieDescription"
+          type="text"
+          id="film-description"
+          placeholder="Описание"
+        ></textarea>
+      </div>
+      <div class="main-picture">
+        <p>Главная картинка</p>
+        <img :src="movie_page.picture.imageUrl" alt="picture" />
+        <input
+          type="file"
+          style="display: none"
+          ref="fileInput"
+          @change="onFileSelected"
+        />
+        <button @click="onPickFile" class="btn btn-primary">Добавить</button>
+        <button @click="removeImage" class="btn btn-danger">Удалить</button>
+      </div>
+      <div class="picture-gallery">
+        <p>Галерея картинок</p>
+        <button class="btn btn-primary">Добавить</button>
+      </div>
+      <div class="trailer">
+        <label for="trailer">Ссылка на трейлер</label>
+        <input
+          v-model="movie_page.trailerLink"
+          type="text"
+          id="trailer"
+          placeholder="Ссылка на видео в youtube"
+        />
+      </div>
+      <div class="film-types">
+        <p>Типы кино</p>
+        <div class="checkbox">
+          <label for="2d">2D</label>
+          <input
+            v-model="movie_page.filmType.twoD"
+            type="checkbox"
+            name="2D"
+            id="2d"
+          />
+        </div>
+        <div class="checkbox">
+          <label for="3d">3D</label>
+          <input
+            v-model="movie_page.filmType.threeD"
+            type="checkbox"
+            name="3D"
+            id="3d"
+          />
+        </div>
+        <div class="checkbox">
+          <label for="imax">IMAX</label>
+          <input
+            v-model="movie_page.filmType.imax"
+            type="checkbox"
+            name="IMAX"
+            id="imax"
+          />
+        </div>
+      </div>
+      <div class="seo">
+        <p>SEO блок:</p>
+        <form>
+          <label for="url">URL: </label>
+          <input
+            v-model="movie_page.seo.url"
+            type="text"
+            id="url"
+            placeholder="URL"
+          />
+          <label for="title">Title: </label>
+          <input
+            v-model="movie_page.seo.title"
+            type="text"
+            id="title"
+            placeholder="Title"
+          />
+          <label for="keywords">Keywords</label>
+          <input
+            v-model="movie_page.seo.keywords"
+            type="text"
+            id="keywords"
+            placeholder="word"
+          />
+          <label for="description">Description: </label>
+          <textarea
+            v-model="movie_page.seo.description"
+            type="text"
+            id="description"
+            placeholder="Description"
+          ></textarea>
+        </form>
+      </div>
+      <div class="buttons">
+        <button @click="savePage" class="btn btn-primary">Сохранить</button>
+        <button @click="clearPage" class="btn btn-danger">
+          Вернуть базовую версию
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "MoviePage",
+  data() {
+    return {
+      movie_page: {
+        filmName: "",
+        movieDescription: "",
+        trailerLink: "",
+        filmType: {
+          twoD: false,
+          threeD: false,
+          imax: false
+        },
+        picture: {
+          selectedFile: null,
+          imageUrl: "",
+          image: null,
+        },
+        seo: {
+          url: "",
+          title: "",
+          keywords: "",
+          description: "",
+        },
+      },
+    };
+  },
+  mounted() {
+  },
+  methods: {
+    languageActive() {},
+    onPickFile() {
+      this.$refs.fileInput.click();
+    },
+    onFileSelected(event) {
+      const files = event.target.files;
+      this.movie_page.picture.selectedFile = files[0].name;
+      if (this.movie_page.picture.selectedFile.indexOf(".") <= 0) {
+        return alert("Please add a valid file");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.movie_page.picture.imageUrl = fileReader.result;
+      });
+      fileReader.readAsDataURL(files[0]);
+      this.movie_page.picture.image = files[0];
+    },
+    removeImage() {
+      this.movie_page.picture.imageUrl = "";
+    },
+    savePage() {
+      this.$store.dispatch("onMoviePageSave", this.movie_page)
+    },
+    clearPage() {
+      console.log(this.movie_page);
+      this.movie_page = {
+        filmName: "",
+        movieDescription: "",
+        trailerLink: "",
+        filmType: {
+          twoD: false,
+          threeD: false,
+          imax: false
+        },
+        picture: {
+          selectedFile: null,
+          imageUrl: "",
+          image: null,
+        },
+        seo: {
+          url: "",
+          title: "",
+          keywords: "",
+          description: "",
+        },
+      }
+      localStorage.setItem("movie_page", JSON.stringify(this.movie_page));
+    },
+  },
+};
+</script>
+
+<style scoped>
+.movie-picture-page {
+  min-height: 709.021px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.language {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 30px;
+}
+.language button {
+  cursor: pointer;
+  background: darkgray;
+  padding: 20px 10px 0;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  border: none;
+}
+.language button:hover {
+  background: rgb(136, 136, 136);
+}
+.active {
+  background: rgb(255, 255, 255);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+label {
+  margin-right: 15px;
+}
+.film-name {
+  display: flex;
+  align-items: start;
+  margin-bottom: 20px;
+}
+.film-name input {
+  width: 300px;
+}
+.description {
+  display: flex;
+  margin-bottom: 20px;
+}
+.description textarea {
+  width: 100%;
+  min-height: 200px;
+}
+.main-picture {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+.main-picture button {
+  height: 40px;
+}
+.picture-gallery {
+  display: flex;
+  margin-bottom: 20px;
+}
+.trailer {
+  display: flex;
+  margin-bottom: 20px;
+}
+.trailer input {
+  width: 80%;
+}
+.film-types {
+  display: flex;
+  margin-bottom: 20px;
+}
+.film-types p {
+  margin-right: 30px;
+}
+.checkbox {
+  margin-right: 10px;
+  width: 80px;
+}
+.seo {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+}
+.seo form {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 600px;
+  width: 100%;
+}
+.seo p {
+  margin-right: 20px;
+}
+.buttons {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+.buttons :nth-child(1) {
+  margin-right: 20px;
+}
+</style>

@@ -1,7 +1,8 @@
 <template>
   <div>
-    <NavBar v-if="isLoggedIn" />
-    <SideBar v-if="isLoggedIn" />
+    <Spinner v-if="loading" />
+    <NavBar v-if="isLoggedIn" :isLoggedIn="isLoggedIn"  />
+    <SideBar  v-if="isLoggedIn" :isLoggedIn="isLoggedIn" />
     <router-view class="content-wrapper" />
   </div>
 </template>
@@ -9,38 +10,24 @@
 <script>
 import NavBar from "./components/NavBar";
 import SideBar from "./components/SideBar";
-import firebase from "firebase/app";
-import "firebase/auth";
-
+import Spinner from './components/Spinner';
+import { mapGetters } from "vuex";
 export default {
   components: {
     NavBar,
     SideBar,
+    Spinner
   },
   mounted() {
-    this.setupFirebase();
+    this.onSetupFirebase();
   },
+  computed: mapGetters(['loading', 'isLoggedIn']),
   methods: {
-    setupFirebase() {
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          // User is signed in.
-          console.log("signed in");
-          this.isLoggedIn = true;
-        } else {
-          // No user is signed in.
-          this.isLoggedIn = false;
-          console.log("signed out", this.isLoggedIn);
-          this.$router.replace({name: "Login"})
-        }
-      });
-    },
+    onSetupFirebase() {
+      this.$store.dispatch("setupFirebase")
+    }
   },
-  data() {
-    return {
-      isLoggedIn: false,
-    };
-  },
+  
 };
 </script>
 

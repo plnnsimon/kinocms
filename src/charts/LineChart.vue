@@ -15,6 +15,7 @@
 
 <script>
 import { Line } from "vue-chartjs";
+import firebase from "firebase";
 export default {
   name: "LineChart",
   extends: Line,
@@ -22,37 +23,40 @@ export default {
     return {};
   },
   mounted() {
-    this.setup();
+    this.loadPieData();
   },
   methods: {
-    setup() {
-      this.renderChart(
-        {
-          labels: [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-          ],
-          datasets: [
+    loadPieData() {
+      let months = [];
+      for (let i = 1; i < 7; i++) {
+        let d = new Date(i + 1 + "/1");
+        months.push(d.toLocaleDateString(undefined, { month: "long" }));
+      }
+      firebase
+        .database()
+        .ref("charts")
+        .once("value")
+        .then((data) => {
+          const obj = data.val();
+          let dataArr = Array.from(obj.linechart.datasets.data.split(", "));
+          this.renderChart(
             {
-              borderColor: "rgb(30,144,255)",
-              backgroundColor: "rgba(30, 174, 255, 0.1)",
-              data: [65, 59, 80, 81, 56, 55, 40],
+              labels: months,
+              datasets: [
+                {
+                  borderColor: obj.linechart.datasets.borderColor,
+                  data: dataArr,
+                  backgroundColor: obj.linechart.datasets.backgroundColor,
+                },
+              ],
             },
-          ],
-        },
-        {
-          responsive: true,
-          maintainAspectRatio: false,
-          legend: {
-            display: false,
-          },
-        }
-      );
+            {
+              legend: {
+                display: false,
+              },
+            }
+          );
+        });
     },
   },
 };

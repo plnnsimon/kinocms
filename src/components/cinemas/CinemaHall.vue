@@ -6,130 +6,114 @@
     </div>
     <div class="container">
       <div class="film-name">
-        <label for="film-name">Название фильма</label>
+        <label for="film-name">Номер зала</label>
         <input
-          v-model="movie_page.filmName"
+          v-model="cinemaHall.hallName"
           type="text"
-          id="film-name"
-          placeholder="Название фильма"
+          id="cinema-name"
+          placeholder="8 зал"
         />
       </div>
       <div class="description">
-        <label for="film-description">Описание</label>
+        <label for="film-description">Описание зала</label>
         <textarea
-          v-model="movie_page.movieDescription"
+          v-model="cinemaHall.hallDescription"
           type="text"
-          id="film-description"
+          id="cinema-description"
           placeholder="Описание"
         ></textarea>
       </div>
+      
       <div class="main-picture">
-        <p>Главная картинка</p>
-        <img :src="movie_page.picture.imageUrl" alt="picture" />
+        <p>Схема зала</p>
+        <img class="cinema-logo" :src="cinemaHall.scheme.imageUrl" alt="scheme" />
         <input
           type="file"
           style="display: none"
-          ref="fileInput"
-          @change="onFileSelected"
+          ref="schemeFileInput"
+          @change="onSchemeSelected"
         />
-        <button @click="onPickFile" class="btn btn-primary">Добавить</button>
-        <button @click="removeImage" class="btn btn-danger">Удалить</button>
+        <button @click="onPickSchemeFile" class="btn btn-primary">
+          Добавить
+        </button>
+        <button @click="removeSchemeImage" class="btn btn-danger">Удалить</button>
+      </div>
+      <div class="main-picture">
+        <p>Верхний баннер</p>
+        <img
+          class="cinema-banner"
+          :src="cinemaHall.bannerPhoto.imageUrl"
+          alt="banner picture"
+        />
+        <input
+          type="file"
+          style="display: none"
+          ref="bannerFileInput"
+          @change="onBannerSelected"
+        />
+        <button @click="onPickBannerFile" class="btn btn-primary">
+          Добавить
+        </button>
+        <button @click="removeBannerImage" class="btn btn-danger">
+          Удалить
+        </button>
       </div>
       <div class="picture-gallery">
         <p>Галерея картинок</p>
         <div class="images">
           <div
             class="gallery-image"
-            v-for="(image, index) in movie_page.imageGallery"
+            v-for="(image, index) in cinemaHall.cinemaHallGallery"
             :key="index"
           >
             <i
               class="fas fa-trash-alt"
               @click="removeGalleryImage(index)"
-              v-if="movie_page.imageGallery[index].imageUrl"
+              v-if="cinemaHall.cinemaHallGallery[index].imageUrl"
             ></i>
             <input
               :index="index"
-              v-if="!movie_page.imageGallery[index].imageUrl"
+              v-if="!cinemaHall.cinemaHallGallery[index].imageUrl"
               type="file"
               @change="onGalleryImageSelected(index)"
               ref="galleryImageFile"
             />
             <img
-              v-if="movie_page.imageGallery[index].imageUrl"
-              :src="movie_page.imageGallery[index].imageUrl"
+              v-if="cinemaHall.cinemaHallGallery[index].imageUrl"
+              :src="cinemaHall.cinemaHallGallery[index].imageUrl"
             />
           </div>
         </div>
-
         <button @click="addImage" class="btn btn-primary">Добавить</button>
       </div>
-      <div class="trailer">
-        <label for="trailer">Ссылка на трейлер</label>
-        <input
-          v-model="movie_page.trailerLink"
-          type="text"
-          id="trailer"
-          placeholder="Ссылка на видео в youtube"
-        />
-      </div>
-      <div class="film-types">
-        <p>Типы кино</p>
-        <div class="checkbox">
-          <label for="2d">2D</label>
-          <input
-            v-model="movie_page.filmType.twoD"
-            type="checkbox"
-            name="2D"
-            id="2d"
-          />
-        </div>
-        <div class="checkbox">
-          <label for="3d">3D</label>
-          <input
-            v-model="movie_page.filmType.threeD"
-            type="checkbox"
-            name="3D"
-            id="3d"
-          />
-        </div>
-        <div class="checkbox">
-          <label for="imax">IMAX</label>
-          <input
-            v-model="movie_page.filmType.imax"
-            type="checkbox"
-            name="IMAX"
-            id="imax"
-          />
-        </div>
-      </div>
+      
       <div class="seo">
         <p>SEO блок:</p>
         <form>
           <label for="url">URL: </label>
           <input
-            v-model="movie_page.seo.url"
+            v-model="cinemaHall.seo.url"
             type="text"
             id="url"
             placeholder="URL"
           />
           <label for="title">Title: </label>
           <input
-            v-model="movie_page.seo.title"
+            v-model="cinemaHall.seo.title"
             type="text"
             id="title"
             placeholder="Title"
           />
           <label for="keywords">Keywords</label>
           <input
-            v-model="movie_page.seo.keywords"
+            v-model="cinemaHall.seo.keywords"
             type="text"
             id="keywords"
             placeholder="word"
           />
           <label for="description">Description: </label>
           <textarea
-            v-model="movie_page.seo.description"
+            v-model="cinemaHall.seo.description"
             type="text"
             id="description"
             placeholder="Description"
@@ -138,9 +122,6 @@
       </div>
       <div class="buttons">
         <button @click="savePage" class="btn btn-primary">Сохранить</button>
-        <button @click="clearPage" class="btn btn-danger">
-          Вернуть базовую версию
-        </button>
       </div>
     </div>
   </div>
@@ -148,20 +129,19 @@
 
 <script>
 export default {
-  name: "MoviePage",
+  name: "CinemaCard",
   data() {
     return {
-      movie_page: {
-        imageGallery: [],
-        filmName: "",
-        movieDescription: "",
-        trailerLink: "",
-        filmType: {
-          twoD: false,
-          threeD: false,
-          imax: false,
+      cinemaHall: {
+        cinemaHllGallery: [],
+        hallName: "",
+        hallDescription: "",
+        scheme: {
+          selectedFile: null,
+          imageUrl: "",
+          image: null,
         },
-        picture: {
+        bannerPhoto: {
           selectedFile: null,
           imageUrl: "",
           image: null,
@@ -177,69 +157,62 @@ export default {
   },
   mounted() {},
   methods: {
-    addImage() {
-      this.movie_page.imageGallery.push({
-        imageUrl: "",
-      });
-    },
     languageActive() {},
-    onPickFile() {
-      this.$refs.fileInput.click();
+    onPickSchemeFile() {
+      this.$refs.schemeFileInput.click();
     },
-    onFileSelected(event) {
+    onSchemeSelected(event) {
       const files = event.target.files;
-      this.movie_page.picture.selectedFile = files[0].name;
-      if (this.movie_page.picture.selectedFile.indexOf(".") <= 0) {
+      this.cinemaHall.scheme.selectedFile = files[0].name;
+      if (this.cinemaHall.scheme.selectedFile.indexOf(".") <= 0) {
         return alert("Please add a valid file");
       }
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.movie_page.picture.imageUrl = fileReader.result;
+        this.cinemaHall.scheme.imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(files[0]);
-      this.movie_page.picture.image = files[0];
+      this.cinemaHall.scheme.image = files[0];
+    },
+    removeSchemeImage() {
+      this.cinemaHall.scheme.imageUrl = "";
+    },
+    onPickBannerFile() {
+      this.$refs.bannerFileInput.click();
+    },
+    onBannerSelected(event) {
+      const files = event.target.files;
+      this.cinemaHall.bannerPhoto.selectedFile = files[0].name;
+      if (this.cinemaHall.bannerPhoto.selectedFile.indexOf(".") <= 0) {
+        return alert("Please add a valid file");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.cinemaHall.bannerPhoto.imageUrl = fileReader.result;
+      });
+      fileReader.readAsDataURL(files[0]);
+      this.cinemaHall.bannerPhoto.image = files[0];
+    },
+    addImage() {
+      this.cinemaHall.cinemasGallery.push({
+        imageUrl: "",
+      });
     },
     onGalleryImageSelected(index) {
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.movie_page.imageGallery[index].imageUrl = fileReader.result;
+        this.cinemaHall.cinemaHallGallery[index].imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(this.$refs.galleryImageFile[0].files[0]);
     },
     removeGalleryImage(index) {
-      this.movie_page.imageGallery.splice(index, 1);
+      this.cinemaHall.cinemaHallGallery.splice(index, 1);
     },
-    removeImage() {
-      this.movie_page.picture.imageUrl = "";
+    removeBannerImage() {
+      this.cinemaHall.bannerPhoto.imageUrl = "";
     },
     savePage() {
-      let movie = {...this.movie_page}
-      this.$store.dispatch("addMovie", movie);
-    },
-    clearPage() {
-      console.log(this.movie_page);
-      this.movie_page = {
-        filmName: "",
-        movieDescription: "",
-        trailerLink: "",
-        filmType: {
-          twoD: false,
-          threeD: false,
-          imax: false,
-        },
-        picture: {
-          selectedFile: null,
-          imageUrl: "",
-          image: null,
-        },
-        seo: {
-          url: "",
-          title: "",
-          keywords: "",
-          description: "",
-        },
-      };
-      localStorage.setItem("movie_page", JSON.stringify(this.movie_page));
+      // this.$store.dispatch("addCinema", this.cinemaCard);
     },
   },
 };
@@ -298,7 +271,7 @@ label {
 .main-picture {
   display: flex;
   flex-direction: row;
-  margin-bottom: 20px;
+  margin: 50px 0;
   justify-content: space-between;
 }
 .main-picture button {
@@ -378,5 +351,28 @@ label {
 }
 .buttons :nth-child(1) {
   margin-right: 20px;
+}
+.cinema-logo {
+  width: 200px;
+}
+.table {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.table td {
+  border-width: 2px;
+}
+table {
+  width: 400px;
+  position: relative;
+}
+table i {
+  position: absolute;
+  cursor: pointer;
+}
+table i:hover {
+  color: rgb(117, 117, 117);
 }
 </style>

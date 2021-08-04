@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import axios from "axios"
 import firebase from "firebase"
 import router from '../router'
-import login from './modules/login'
+// import login from './modules/login'
 Vue.prototype.$axios = axios;
 
 Vue.use(Vuex)
@@ -25,9 +25,17 @@ export default new Vuex.Store({
     loading: false,
     storeBanners: [],
     storeNDBanners: [],
-    movie_page: {}
+    movies: [],
+    isPopupVisible: false,
+    cinemas: []
   },
   mutations: {
+    setCinemas(state, payload) {
+      state.cinemas = payload
+    },
+    addCinema(state, payload) {
+      state.cinemas.push(payload)
+    },
     setIsLoggedIn(state, payload) {
       state.isLoggedIn = payload
     },
@@ -40,17 +48,35 @@ export default new Vuex.Store({
     setLoadedNDBanners(state, payload) {
       state.storeNDBanners = payload
     },
-    setLoadedMoviePage(state, payload) {
-      state.movie_page = payload
+    setMovies(state, payload) {
+      state.movies = payload
     },
     addBanner(state, payload) {
       state.storeBanners.push(payload)
     },
     addNDBanner(state, payload) {
       state.storeNDBanners.push(payload)
+    },
+    addMovie(state, payload) {
+      state.movies.push(payload)
+    },
+    setPopupInfo(state, payload) {
+      state.isPopupVisible = payload
+    },
+    removeMovie(state, payload) {
+      state.movies.filter(el => el != payload)
+    },
+    removeCinema(state, payload) {
+      state.cinemas.filter(el => el != payload)
     }
   },
   actions: {
+    getMovieInfo({commit}) {
+      commit('setPopupInfo', true)
+    },
+    closeMovieInfo({commit}) {
+      commit('setPopupInfo', false)
+    },
     logIn({ commit }, payload) {
       commit('setLoading', true)
       firebase
@@ -87,6 +113,60 @@ export default new Vuex.Store({
           commit('setIsLoggedIn', false)
           router.push('/login').catch(err => console.log(err))
         })
+    },
+
+    loadMovies({commit}) {
+      commit('setLoading', true)
+      firebase.database().ref('movies').once('value')
+        .then((data) => {
+          const movies = []
+          const obj = data.val()
+          for (let key in obj) {
+            movies.push({
+              filmId: key,
+              imageUrl: obj[key].picture.imageUrl,
+              filmName: obj[key].filmName,
+              description: obj[key].movieDescription,
+              filmType: obj[key].filmType,
+              imageGallery: obj[key].imageGallery
+            })
+          }
+          commit('setMovies', movies)
+          commit('setLoading', false)
+        })
+    },
+
+    loadCinemas({commit}) {
+      commit('setLoading', true)
+      firebase.database().ref('cinemas').once('value')
+        .then((data) => {
+          const cinemas = []
+          const obj = data.val()
+          for (let key in obj) {
+            cinemas.push({
+              cinemaId: key,
+              logo: obj[key].logo.imageUrl,
+              bannerPhoto: obj[key].bannerPhoto.imageUrl,
+              cinemaName: obj[key].cinemaName,
+              description: obj[key].cinemaDescription,
+              conditions: obj[key].cinemaConditions,
+              filmType: obj[key].filmType,
+              cinemasGallery: obj[key].cinemasGallery
+            })
+          }
+          commit('setCinemas', cinemas)
+          commit('setLoading', false)
+        })
+    },
+
+    removeMovie({commit}, payload) {
+      firebase.database().ref(`movies`).child(payload).remove()
+      commit('removeMovie', payload)
+    },
+
+    removeCinema({commit}, payload) {
+      firebase.database().ref(`cinemas`).child(payload).remove()
+      commit('removeCinema', payload)
     },
 
     loadBanners({ commit }) {
@@ -165,16 +245,32 @@ export default new Vuex.Store({
       console.log("saved");
     },
 
-    onMoviePageSave({ commit }, payload) {
-      firebase.database().ref('movie_page').push(payload)
+    addMovie({ commit }, payload) {
+      commit('setLoading', true)
+      firebase.database().ref('movies').push(payload)
         .then(() => {
-          commit('setLoadedMoviePage', payload)
+          commit('addMovie', payload)
+          commit('setMovies', payload)
+          commit('setLoading', false)
           alert("saved successfully")
+          router.push('/movies');
         })
         .catch((err) => console.log(err))
       console.log("saved");
       
     },
+    addCinema({commit}, payload) {
+      commit('setLoading', true)
+      firebase.database().ref('cinemas').push(payload)
+        .then(() => {
+          commit('addCinema', payload)
+          commit('setCinemas', payload)
+          alert("saved successfully")
+          router.push('/cinemas');
+        })
+        .catch(err => console.log(err))
+      console.log('saved');
+    }
   },
     getters: {
       storeBanners(state) {
@@ -189,12 +285,17 @@ export default new Vuex.Store({
       loading(state) {
         return state.loading
       },
-      movie_page(state) {
-        return state.movie_page
+      movies(state) {
+        return state.movies
+      },
+      isPopupVisible(state) {
+        return state.isPopupVisible
+      },
+      cinemas(state) {
+        return state.cinemas
       }
     },
     modules: {
-      login
     }
 
   })

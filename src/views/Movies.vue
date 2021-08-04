@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div class="loader">
+      <Spinner v-if="loading" />
+    </div>
     <h2 class="main-title">Список фильмов текущих</h2>
     <div class="movies">
       <Movie :movie="movie" v-for="(movie, index) of movies" :key="index" />
@@ -9,40 +12,23 @@
 
 <script>
 import Movie from "../components/movies/Movie.vue";
+import Spinner from "../components/Spinner.vue";
 export default {
   name: "Movies",
   components: {
     Movie,
+    Spinner
   },
-  data() {
-    return {
-      movies: [
-        {
-          title: "Алладин",
-          img: "alladin.jpeg",
-        },
-        {
-          title: "Послезавтра",
-          img: "day_after_tomorrow.jpeg",
-        },
-        {
-          title: "Мортал комбат",
-          img: "mortal-kombat.jpeg",
-        },
-        {
-          title: "Алладин",
-          img: "alladin.jpeg",
-        },
-        {
-          title: "Послезавтра",
-          img: "day_after_tomorrow.jpeg",
-        },
-        {
-          title: "Мортал комбат",
-          img: "mortal-kombat.jpeg",
-        },
-      ],
-    };
+  computed: {
+    movies() {
+      return this.$store.getters.movies;
+    },
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
+  mounted() {
+    this.$store.dispatch("loadMovies");
   },
 };
 </script>
@@ -51,11 +37,15 @@ export default {
 .movies {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
   padding: 40px;
 }
 .main-title {
   padding-top: 20px;
   text-align: center;
+}
+.loader {
+  position: relative;
+  left: 50%;
+  top: 230px;
 }
 </style>

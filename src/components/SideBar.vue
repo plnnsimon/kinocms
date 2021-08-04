@@ -30,7 +30,7 @@
               <p>Баннера/Слайдеры</p>
             </router-link>
           </li>
-          <li @mouseenter="dropDown = true"  @mouseleave="dropDown = false" class="nav-item" :class="{'menu-is-opening menu-open': dropDown}" >
+          <li @mouseenter="films = true"  @mouseleave="films = false" class="nav-item" :class="{'menu-is-opening menu-open': films}" >
             <router-link :to="{ name: 'Movies' }" class="nav-link">
               <i class="far fa-circle"></i>
               <p>Фильмы <i class="fas fa-angle-left right"></i></p>
@@ -38,18 +38,38 @@
             <ul class="nav nav-treeview">
               <li class="nav-item">
                 <router-link :to="{ name: 'MoviePage' }" class="nav-link">
-                  <i class="far fa-circle"></i>
+                  <i class="fas fa-circle"></i>
                   <p>Страница Фильма</p>
                 </router-link>
               </li>
             </ul>
           </li>
-          <li class="nav-item">
+          <li @mouseenter="cinemas = true"  @mouseleave="cinemas = false" class="nav-item" :class="{'menu-is-opening menu-open': cinemas}" >
+            <router-link :to="{ name: 'Cinemas' }" class="nav-link">
+              <i class="far fa-circle"></i>
+              <p>Кинотеатры <i class="fas fa-angle-left right"></i></p>
+            </router-link>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link :to="{ name: 'CinemaCard' }" class="nav-link">
+                  <i class="fas fa-circle"></i>
+                  <p>Карточка кинотеатра</p>
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link :to="{ name: 'CinemaHall' }" class="nav-link">
+                  <i class="fas fa-circle"></i>
+                  <p>Карточка зала</p>
+                </router-link>
+              </li>
+            </ul>
+          </li>
+          <!-- <li class="nav-item">
             <router-link :to="{ name: 'Cinemas' }" class="nav-link">
               <i class="far fa-circle"></i>
               <p>Кинотеатры</p>
             </router-link>
-          </li>
+          </li> -->
           <li class="nav-item">
             <router-link :to="{ name: 'News' }" class="nav-link">
               <i class="far fa-circle"></i>
@@ -94,7 +114,8 @@ export default {
   props: ['loading'],
   data() {
     return {
-      dropDown: false
+      films: false,
+      cinemas: false
     }
   }
 };

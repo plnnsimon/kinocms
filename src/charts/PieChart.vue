@@ -6,6 +6,7 @@
 
 <script>
 import { Pie } from "vue-chartjs";
+import firebase from "firebase";
 export default {
   name: "PieChart",
   extends: Pie,
@@ -13,42 +14,45 @@ export default {
     return {};
   },
   mounted() {
-    this.setup();
+    this.loadPieData();
   },
   methods: {
-    setup() {
-      this.renderChart(
-        {
-          labels: [
-            "Display",
-            "Paid Search",
-            "Organic Search",
-            "Referral",
-            "Social",
-            "Direct",
-            "(Other)",
-          ],
-          datasets: [
+    loadPieData() {
+      firebase
+        .database()
+        .ref("charts")
+        .once("value")
+        .then((data) => {
+          const obj = data.val();
+          let dataArr = Array.from(obj.piechart.datasets.data.split(", "));
+          let dataBackCol = Array.from(
+            obj.piechart.datasets.backgroundColor.split(", ")
+          );
+          this.renderChart(
             {
-              data: [700, 500, 400, 600, 300, 100, 10],
-              backgroundColor: [
-                "#3c8dbc",
-                "#0ddF5a",
-                "#f56954",
-                "#ffDc10",
-                "#00c0ef",
-                "#0da000",
-                "#d2d6de",
+              labels: [
+                "Display",
+                "Paid Search",
+                "Organic Search",
+                "Referral",
+                "Social",
+                "Direct",
+                "(Other)",
+              ],
+              datasets: [
+                {
+                  data: dataArr,
+                  backgroundColor: dataBackCol,
+                },
               ],
             },
-          ],
-        },
-        {
-          legend: {
-            display: false,
-          },
-        }
-      );
+            {
+              legend: {
+                display: false,
+              },
+            }
+          );
+        });
     },
   },
 };

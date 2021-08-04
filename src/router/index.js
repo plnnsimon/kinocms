@@ -37,6 +37,22 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../components/movies/MoviePage')
   },
   {
+    path: '/cinemacard',
+    name: 'CinemaCard',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../components/cinemas/CinemaCard')
+  },
+  {
+    path: '/cinemahall',
+    name: 'CinemaHall',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../components/cinemas/CinemaHall')
+  },
+  {
     path: '/cinemas',
     name: 'Cinemas',
     // route level code-splitting

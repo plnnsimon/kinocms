@@ -15,7 +15,7 @@
             :key="index"
           />
 
-          <div v-if="message">
+          <div v-if="storeBanners.length == 0">
             <p>No banners yet, try to add one</p>
           </div>
         </div>
@@ -57,7 +57,7 @@
           v-for="(banner, index) of storeNDBanners"
           :key="index"
         />
-        <div v-if="message">
+        <div v-if="storeNDBanners.length == 0">
           <p>No banners yet, try to add one</p>
         </div>
       </div>
@@ -99,11 +99,6 @@ export default {
     ThroughBanner,
     NewsDiscountBanners,
     Spinner,
-  },
-  data() {
-    return {
-      message: false,
-    };
   },
   computed: {
     storeBanners() {
@@ -226,6 +221,7 @@ h2 {
   border: 1px solid black;
   border-radius: 10px;
   position: relative;
+  box-shadow: 12px 4px 13px 4px rgb(0 0 0 / 50%);
 }
 .switcher {
   position: absolute;
@@ -317,5 +313,11 @@ input:checked + .slider:before {
   position: absolute;
   top: 20%;
   left: 50%;
+}
+.banners h2 {
+  padding-top: 50px;
+}
+.banners h2:nth-child(1) {
+padding-top: 0;
 }
 </style>

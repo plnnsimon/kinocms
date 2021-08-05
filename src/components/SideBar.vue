@@ -64,17 +64,19 @@
               </li>
             </ul>
           </li>
-          <!-- <li class="nav-item">
-            <router-link :to="{ name: 'Cinemas' }" class="nav-link">
-              <i class="far fa-circle"></i>
-              <p>Кинотеатры</p>
-            </router-link>
-          </li> -->
-          <li class="nav-item">
+          <li @mouseenter="news = true"  @mouseleave="news = false" class="nav-item" :class="{'menu-is-opening menu-open': news}" >
             <router-link :to="{ name: 'News' }" class="nav-link">
               <i class="far fa-circle"></i>
-              <p>Новости</p>
+              <p>Новости <i class="fas fa-angle-left right"></i></p>
             </router-link>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link :to="{ name: 'NewsPage' }" class="nav-link">
+                  <i class="fas fa-circle"></i>
+                  <p>Страница Новости</p>
+                </router-link>
+              </li>
+            </ul>
           </li>
           <li class="nav-item">
             <router-link :to="{ name: 'Promotions' }" class="nav-link">
@@ -115,7 +117,8 @@ export default {
   data() {
     return {
       films: false,
-      cinemas: false
+      cinemas: false,
+      news: false
     }
   }
 };

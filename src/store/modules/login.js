@@ -1,47 +1,59 @@
-// import firebase from 'firebase'
-// // import 'firebase/auth'
-// export default {
-//     state: {
-//         isLoggedIn: false,
-//         // login: '',
-//         // password: ''
-//     },
-//     mutations: {
-//         setIsLoggedIn(state, payload) {
-//             state.isLoggedIn = payload
-//         },
-//         // setLogIn(state, payload) {
-//         //     state.login = payload,
-//         //         state.password = payload
-//         // }
-//     },
-//     actions: {
-//         logIn({ commit }, payload) {
-//             firebase
-//                 .auth()
-//                 .signInWithEmailAndPassword(payload.email, payload.password)
-//                 .then(() => {
-//                     commit('setIsLoggedIn', true)
-//                     this.$router.replace({ name: "Stats" });
+import firebase from 'firebase'
+import 'firebase/auth'
+import router from '../../router'
+export default {
+    state: {
+        isLoggedIn: false,
+    },
+    mutations: {
+        setIsLoggedIn(state, payload) {
+            state.isLoggedIn = payload
+        },
+    },
+    actions: {
+        async logIn({ commit }, payload) {
+            commit('setLoading', true)
+            await firebase
+              .auth()
+              .signInWithEmailAndPassword(payload.email, payload.password)
+              .then(() => {
+                commit('setLoading', false)
+                commit('setIsLoggedIn', true)
+                router.push('/stats');
+              })
+              .catch((err) => {
+                console.log(err + "from");
+                alert("you are not administrator!");
+              });
+      
+          },
+          setupFirebase({ commit }) {
+            firebase.auth().onAuthStateChanged((user) => {
+              if (user) {
+                // User is signed in.
+                console.log("signed in");
+                commit('setIsLoggedIn', true)
+              } else {
+                // No user is signed in.
+                commit('setIsLoggedIn', false)
+                console.log("signed out");
+                router.push('/login').catch(() => { });
+              }
+            });
+          },
+          signOut({ commit }) {
+            firebase.auth().signOut()
+              .then(() => {
+                commit('setIsLoggedIn', false)
+                router.push('/login').catch(err => console.log(err))
+              })
+          },
 
-//                 })
-//                 .catch((err) => {
-//                     console.log(err);
-//                     // alert("you are not administrator!");
-//                 });
-
-//         }
-
-//     },
-//     getters: {
-//         isLoggedIn(state) {
-//             return state.isLoggedIn
-//         },
-//         // login(state) {
-//         //     return state.login
-//         // },
-//         // password(state) {
-//         //     return state.password
-//         // }
-//     }
-// }
+    },
+    getters: {
+        isLoggedIn(state) {
+            return state.isLoggedIn
+        },
+        
+    }
+}

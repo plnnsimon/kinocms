@@ -213,7 +213,7 @@ export default {
       this.movie_page.picture.imageUrl = "";
     },
     savePage() {
-      let movie = {...this.movie_page}
+      let movie = { ...this.movie_page };
       this.$store.dispatch("addMovie", movie);
     },
     clearPage() {
@@ -283,6 +283,8 @@ label {
   display: flex;
   align-items: flex-start;
   margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
 }
 .film-name input {
   width: 300px;
@@ -290,6 +292,8 @@ label {
 .description {
   display: flex;
   margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
 }
 .description textarea {
   width: 100%;
@@ -300,6 +304,8 @@ label {
   flex-direction: row;
   margin-bottom: 20px;
   justify-content: space-between;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
 }
 .main-picture button {
   height: 40px;
@@ -308,6 +314,8 @@ label {
   display: flex;
   flex-direction: column;
   margin: 50px 0;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
 }
 .picture-gallery button {
   height: 40px;
@@ -341,6 +349,8 @@ label {
 .trailer {
   display: flex;
   margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0 0 0 / 50%);
 }
 .trailer input {
   width: 80%;
@@ -348,6 +358,8 @@ label {
 .film-types {
   display: flex;
   margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0 0 0 / 50%);
 }
 .film-types p {
   margin-right: 30px;
@@ -360,6 +372,8 @@ label {
   display: flex;
   flex-direction: row;
   margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
 }
 .seo form {
   display: flex;

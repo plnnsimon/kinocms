@@ -1,119 +1,110 @@
 <template>
-  <div class="movie-picture-page">
+  <div class="news-page">
+    <div class="switcher">
+      <label class="switch">
+        <input v-model="news_page.checked" type="checkbox" />
+        <span class="slider round"></span>
+      </label>
+    </div>
     <div class="language">
       <button @click="languageActive">Русский</button>
       <button @click="languageActive">Украинский</button>
     </div>
     <div class="container">
-      <div class="film-name">
-        <label for="film-name">Номер зала</label>
-        <input
-          v-model="cinemaHall.hallName"
-          type="text"
-          id="cinema-name"
-          placeholder="8 зал"
-        />
+      <div class="news-top-section">
+        <div class="film-name">
+          <label for="film-name">Название новости</label>
+          <input
+            v-model="news_page.newsTitle"
+            type="text"
+            id="film-name"
+            placeholder="Название новости"
+          />
+        </div>
+        <div class="date-input">
+          <p>Дата публикации</p>
+          <input
+            type="date"
+            v-model="news_page.newsDate"
+            placeholder="8/22/2021"
+          />
+        </div>
       </div>
+
       <div class="description">
-        <label for="film-description">Описание зала</label>
+        <label for="film-description">Описание</label>
         <textarea
-          v-model="cinemaHall.hallDescription"
+          v-model="news_page.newsDescription"
           type="text"
-          id="cinema-description"
+          id="film-description"
           placeholder="Описание"
         ></textarea>
-      </div>
-      
-      <div class="main-picture">
-        <p>Схема зала</p>
-        <img class="cinema-logo" :src="cinemaHall.scheme.imageUrl" alt="scheme" />
-        <input
-          type="file"
-          style="display: none"
-          ref="schemeFileInput"
-          @change="onSchemeSelected"
-        />
-        <button @click="onPickSchemeFile" class="btn btn-primary">
-          Добавить
-        </button>
-        <button @click="removeSchemeImage" class="btn btn-danger">Удалить</button>
-      </div>
-      <div class="main-picture">
-        <p>Верхний баннер</p>
-        <img
-          class="cinema-banner"
-          :src="cinemaHall.bannerPhoto.imageUrl"
-          alt="banner picture"
-        />
-        <input
-          type="file"
-          style="display: none"
-          ref="bannerFileInput"
-          @change="onBannerSelected"
-        />
-        <button @click="onPickBannerFile" class="btn btn-primary">
-          Добавить
-        </button>
-        <button @click="removeBannerImage" class="btn btn-danger">
-          Удалить
-        </button>
       </div>
       <div class="picture-gallery">
         <p>Галерея картинок</p>
         <div class="images">
           <div
             class="gallery-image"
-            v-for="(image, index) in cinemaHall.cinemaHallGallery"
+            v-for="(image, index) in news_page.imageGallery"
             :key="index"
           >
             <i
               class="fas fa-trash-alt"
               @click="removeGalleryImage(index)"
-              v-if="cinemaHall.cinemaHallGallery[index].imageUrl"
+              v-if="news_page.imageGallery[index].imageUrl"
             ></i>
             <input
               :index="index"
-              v-if="!cinemaHall.cinemaHallGallery[index].imageUrl"
+              v-if="!news_page.imageGallery[index].imageUrl"
               type="file"
               @change="onGalleryImageSelected(index)"
               ref="galleryImageFile"
             />
             <img
-              v-if="cinemaHall.cinemaHallGallery[index].imageUrl"
-              :src="cinemaHall.cinemaHallGallery[index].imageUrl"
+              v-if="news_page.imageGallery[index].imageUrl"
+              :src="news_page.imageGallery[index].imageUrl"
             />
           </div>
         </div>
+
         <button @click="addImage" class="btn btn-primary">Добавить</button>
       </div>
-      
+      <div class="trailer">
+        <label for="trailer">Ссылка на видео</label>
+        <input
+          v-model="news_page.trailerLink"
+          type="text"
+          id="trailer"
+          placeholder="Ссылка на видео в youtube"
+        />
+      </div>
       <div class="seo">
         <p>SEO блок:</p>
         <form>
           <label for="url">URL: </label>
           <input
-            v-model="cinemaHall.seo.url"
+            v-model="news_page.seo.url"
             type="text"
             id="url"
             placeholder="URL"
           />
           <label for="title">Title: </label>
           <input
-            v-model="cinemaHall.seo.title"
+            v-model="news_page.seo.title"
             type="text"
             id="title"
             placeholder="Title"
           />
           <label for="keywords">Keywords</label>
           <input
-            v-model="cinemaHall.seo.keywords"
+            v-model="news_page.seo.keywords"
             type="text"
             id="keywords"
             placeholder="word"
           />
           <label for="description">Description: </label>
           <textarea
-            v-model="cinemaHall.seo.description"
+            v-model="news_page.seo.description"
             type="text"
             id="description"
             placeholder="Description"
@@ -129,23 +120,17 @@
 
 <script>
 export default {
-  name: "CinemaCard",
+  name: "NewsPage",
   data() {
     return {
-      cinemaHall: {
-        cinemaHllGallery: [],
-        hallName: "",
-        hallDescription: "",
-        scheme: {
-          selectedFile: null,
-          imageUrl: "",
-          image: null,
-        },
-        bannerPhoto: {
-          selectedFile: null,
-          imageUrl: "",
-          image: null,
-        },
+      news_page: {
+        imageGallery: [],
+        checked: false,
+        newsTitle: "",
+        newsDate: "",
+        newsDescription: "",
+        trailerLink: "",
+        isEditing: false,
         seo: {
           url: "",
           title: "",
@@ -157,73 +142,40 @@ export default {
   },
   mounted() {},
   methods: {
-    languageActive() {},
-    onPickSchemeFile() {
-      this.$refs.schemeFileInput.click();
-    },
-    onSchemeSelected(event) {
-      const files = event.target.files;
-      this.cinemaHall.scheme.selectedFile = files[0].name;
-      if (this.cinemaHall.scheme.selectedFile.indexOf(".") <= 0) {
-        return alert("Please add a valid file");
-      }
-      const fileReader = new FileReader();
-      fileReader.addEventListener("load", () => {
-        this.cinemaHall.scheme.imageUrl = fileReader.result;
-      });
-      fileReader.readAsDataURL(files[0]);
-      this.cinemaHall.scheme.image = files[0];
-    },
-    removeSchemeImage() {
-      this.cinemaHall.scheme.imageUrl = "";
-    },
-    onPickBannerFile() {
-      this.$refs.bannerFileInput.click();
-    },
-    onBannerSelected(event) {
-      const files = event.target.files;
-      this.cinemaHall.bannerPhoto.selectedFile = files[0].name;
-      if (this.cinemaHall.bannerPhoto.selectedFile.indexOf(".") <= 0) {
-        return alert("Please add a valid file");
-      }
-      const fileReader = new FileReader();
-      fileReader.addEventListener("load", () => {
-        this.cinemaHall.bannerPhoto.imageUrl = fileReader.result;
-      });
-      fileReader.readAsDataURL(files[0]);
-      this.cinemaHall.bannerPhoto.image = files[0];
-    },
     addImage() {
-      this.cinemaHall.cinemasGallery.push({
+      this.news_page.imageGallery.push({
         imageUrl: "",
       });
+    },
+    languageActive() {},
+    onPickFile() {
+      this.$refs.fileInput.click();
     },
     onGalleryImageSelected(index) {
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.cinemaHall.cinemaHallGallery[index].imageUrl = fileReader.result;
+        this.news_page.imageGallery[index].imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(this.$refs.galleryImageFile[0].files[0]);
     },
     removeGalleryImage(index) {
-      this.cinemaHall.cinemaHallGallery.splice(index, 1);
-    },
-    removeBannerImage() {
-      this.cinemaHall.bannerPhoto.imageUrl = "";
+      this.news_page.imageGallery.splice(index, 1);
     },
     savePage() {
-      // this.$store.dispatch("addCinema", this.cinemaCard);
+      let news = { ...this.news_page };
+      this.$store.dispatch("addNews", news);
     },
   },
 };
 </script>
 
 <style scoped>
-.movie-picture-page {
+.news-page {
   min-height: 709.021px;
   padding: 20px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .language {
   display: flex;
@@ -319,6 +271,28 @@ label {
   height: 100%;
   object-fit: cover;
 }
+.trailer {
+  display: flex;
+  margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0 0 0 / 50%);
+}
+.trailer input {
+  width: 80%;
+}
+.film-types {
+  display: flex;
+  margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0 0 0 / 50%);
+}
+.film-types p {
+  margin-right: 30px;
+}
+.checkbox {
+  margin-right: 10px;
+  width: 80px;
+}
 .seo {
   display: flex;
   flex-direction: row;
@@ -344,7 +318,102 @@ label {
 .buttons :nth-child(1) {
   margin-right: 20px;
 }
-.cinema-logo {
-  width: 200px;
+.news-top-section {
+  display: flex;
+  justify-content: space-between;
+}
+.date-input {
+  justify-content: space-between;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
+}
+.date-input p {
+  margin-right: 10px;
+}
+.switcher {
+  position: absolute;
+  right: 250px;
+  margin-left: 20px;
+}
+.btn-dark {
+  margin: 10px auto;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgb(158, 158, 158);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: rgb(255, 255, 255);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: rgb(62, 255, 56);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #000000;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.speed {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+  display: flex;
+  max-width: 220px;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.speed p {
+  margin: 0;
 }
 </style>

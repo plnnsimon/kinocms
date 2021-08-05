@@ -354,6 +354,8 @@ label {
   display: flex;
   align-items: flex-start;
   margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
 }
 .film-name input {
   width: 300px;
@@ -361,6 +363,8 @@ label {
 .description {
   display: flex;
   margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
 }
 .description textarea {
   width: 100%;
@@ -369,8 +373,10 @@ label {
 .main-picture {
   display: flex;
   flex-direction: row;
-  margin: 50px 0;
+  margin-bottom: 20px;
   justify-content: space-between;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
 }
 .main-picture button {
   height: 40px;
@@ -379,6 +385,8 @@ label {
   display: flex;
   flex-direction: column;
   margin: 50px 0;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
 }
 .picture-gallery button {
   height: 40px;
@@ -409,28 +417,12 @@ label {
   height: 100%;
   object-fit: cover;
 }
-.trailer {
-  display: flex;
-  margin-bottom: 20px;
-}
-.trailer input {
-  width: 80%;
-}
-.film-types {
-  display: flex;
-  margin-bottom: 20px;
-}
-.film-types p {
-  margin-right: 30px;
-}
-.checkbox {
-  margin-right: 10px;
-  width: 80px;
-}
 .seo {
   display: flex;
   flex-direction: row;
   margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
 }
 .seo form {
   display: flex;

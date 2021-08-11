@@ -1,12 +1,8 @@
 <template>
   <div class="movie-picture-page">
-    <div class="language">
-      <button @click="languageActive">Русский</button>
-      <button @click="languageActive">Украинский</button>
-    </div>
     <div class="container">
       <div class="film-name">
-        <label for="film-name">Номер зала</label>
+        <label for="film-name">{{ $t("cinemaHall.hallNumber") }}</label>
         <input
           v-model="cinemaHall.hallName"
           type="text"
@@ -15,17 +11,17 @@
         />
       </div>
       <div class="description">
-        <label for="film-description">Описание зала</label>
+        <label for="film-description">{{ $t("cinemaHall.hallDescription") }}</label>
         <textarea
           v-model="cinemaHall.hallDescription"
           type="text"
           id="cinema-description"
-          placeholder="Описание"
+          :placeholder='$t("cinemaHall.hallDescription")'
         ></textarea>
       </div>
       
       <div class="main-picture">
-        <p>Схема зала</p>
+        <p>{{ $t("cinemaHall.hallSchema") }}</p>
         <img class="cinema-logo" :src="cinemaHall.scheme.imageUrl" alt="scheme" />
         <input
           type="file"
@@ -34,12 +30,12 @@
           @change="onSchemeSelected"
         />
         <button @click="onPickSchemeFile" class="btn btn-primary">
-          Добавить
+          {{ $t("add") }}
         </button>
-        <button @click="removeSchemeImage" class="btn btn-danger">Удалить</button>
+        <button @click="removeSchemeImage" class="btn btn-danger">{{ $t("delete") }}</button>
       </div>
       <div class="main-picture">
-        <p>Верхний баннер</p>
+        <p>{{ $t("cinemaHall.topBanner") }}</p>
         <img
           class="cinema-banner"
           :src="cinemaHall.bannerPhoto.imageUrl"
@@ -52,14 +48,14 @@
           @change="onBannerSelected"
         />
         <button @click="onPickBannerFile" class="btn btn-primary">
-          Добавить
+          {{ $t("add") }}
         </button>
         <button @click="removeBannerImage" class="btn btn-danger">
-          Удалить
+          {{ $t("delete") }}
         </button>
       </div>
       <div class="picture-gallery">
-        <p>Галерея картинок</p>
+        <p>{{ $t("imageGallery") }}</p>
         <div class="images">
           <div
             class="gallery-image"
@@ -84,7 +80,7 @@
             />
           </div>
         </div>
-        <button @click="addImage" class="btn btn-primary">Добавить</button>
+        <button @click="addImage" class="btn btn-primary">{{ $t("add") }}</button>
       </div>
       
       <div class="seo">
@@ -97,31 +93,32 @@
             id="url"
             placeholder="URL"
           />
-          <label for="title">Title: </label>
+          <label for="title">{{ $t("add") }}: </label>
           <input
             v-model="cinemaHall.seo.title"
             type="text"
             id="title"
-            placeholder="Title"
+            :placeholder="$t('title')"
           />
-          <label for="keywords">Keywords</label>
+          <label for="keywords">{{ $t("keywords") }}: </label>
           <input
             v-model="cinemaHall.seo.keywords"
             type="text"
             id="keywords"
-            placeholder="word"
+            :placeholder="$t('keywords')"
           />
-          <label for="description">Description: </label>
+          <label for="description">{{ $t("description") }}: </label>
           <textarea
             v-model="cinemaHall.seo.description"
             type="text"
             id="description"
-            placeholder="Description"
+            :placeholder="$t('description')"
           ></textarea>
         </form>
       </div>
       <div class="buttons">
-        <button @click="savePage" class="btn btn-primary">Сохранить</button>
+        <button @click="savePage" class="btn btn-primary">{{ $t("save") }}</button>
+        <button @click="cancelCreatingHall" class="btn btn-primary">{{ $t("cancel") }}</button>
       </div>
     </div>
   </div>
@@ -130,10 +127,12 @@
 <script>
 export default {
   name: "CinemaCard",
+  props: ['hallId'],
   data() {
     return {
       cinemaHall: {
-        cinemaHllGallery: [],
+        creationDate: new Date().toLocaleDateString(),
+        cinemaHallGallery: [],
         hallName: "",
         hallDescription: "",
         scheme: {
@@ -194,7 +193,7 @@ export default {
       this.cinemaHall.bannerPhoto.image = files[0];
     },
     addImage() {
-      this.cinemaHall.cinemasGallery.push({
+      this.cinemaHall.cinemaHallGallery.push({
         imageUrl: "",
       });
     },
@@ -212,8 +211,11 @@ export default {
       this.cinemaHall.bannerPhoto.imageUrl = "";
     },
     savePage() {
-      // this.$store.dispatch("addCinema", this.cinemaCard);
+      this.$emit('savedHall', this.cinemaHall, this.hallId)
     },
+    cancelCreatingHall() {
+      this.$emit('cancelCreatingHall', false)
+    }
   },
 };
 </script>

@@ -3,20 +3,25 @@
     <div class="loader">
       <Spinner v-if="loading" />
     </div>
-    <h2>Список Новостей</h2>
-
+    <h2>{{ $t("news.newsList") }}</h2>
+    <EditNewsPage
+      v-if="isEditing"
+      :newsItem="newsItem"
+      @updatedNews="updatedNews"
+      @cancelUpdate="cancelUpdate"
+    />
     <div class="table">
       <table v-if="!loading">
         <tr>
-          <td>Название</td>
-          <td>Дата создания</td>
+          <td>{{ $t("news.table.name") }}</td>
+          <td>{{ $t("news.table.date") }}</td>
           <td>Статус</td>
         </tr>
         <tr v-for="(item, index) of news" :key="index">
           <td>{{ item.newsTitle }}</td>
           <td>{{ item.newsDate }}</td>
           <td v-if="item.checked">ВКЛ</td>
-          <td v-else>ВЫКЛ</td>
+          <td v-else>{{ $t("news.table.off") }}</td>
           <i
             ref="editNewsInfo"
             @click="editNewsInfo(item)"
@@ -27,52 +32,30 @@
             class="fas fa-trash-alt"
             style="right: -60px"
           ></i>
-          <div class="buttons">
-            <button
-              v-if="isEditing"
-              @click="updateInfo(item)"
-              class="btn btn-primary"
-            >
-              Обновить
-            </button>
-            <button
-              v-if="isEditing"
-              @click="cancelUpdate"
-              class="btn btn-primary"
-            >
-              Отменить
-            </button>
-          </div>
-          <div v-if="isEditing" class="inputs-field">
-            <input type="text" v-model="item.newsTitle" />
-            <input type="date" v-model="item.newsDate" />
-            <input type="checkbox" v-model="item.checked" />
-          </div>
         </tr>
       </table>
-      <p v-if="news.length == 0">Пока новостей нет</p>
+      <p v-if="news.length == 0">{{ $t("news.noNews") }}</p>
     </div>
-    <button v-if="!isEditing" @click="addCinemaInfo" class="btn btn-primary">
-      <i class="btn-icon fas fa-plus"></i> Создать новость
+    <button v-if="!isEditing" @click="addNews" class="btn btn-primary">
+      <i class="btn-icon fas fa-plus"></i> {{ $t("news.addNews") }}
     </button>
   </div>
 </template>
 
 <script>
 import Spinner from "../components/Spinner";
+import EditNewsPage from "../components/news/EditNewsPage";
+
 export default {
   name: "News",
   components: {
     Spinner,
+    EditNewsPage,
   },
   data() {
     return {
-      updatedItem: {
-        newsTitle: "",
-        newsDate: "",
-        checked: false
-      },
       isEditing: false,
+      newsItem: null,
     };
   },
   computed: {
@@ -85,46 +68,33 @@ export default {
   },
   async mounted() {
     await this.$store.dispatch("loadNews");
-    console.log(this.news);
   },
   methods: {
-    addCinemaInfo() {
-      this.$router.push("./news_page");
+    updatedNews(data) {
+      this.isEditing = data
     },
     addNews() {
-      this.$router.push("/news_page");
-    },
-    updateInfo(item) {
-      try {
-        this.$store.dispatch("updateNews", {
-          imageGallery: item.imageGallery,
-          newsId: item.newsId,
-          description: item.description,
-          newsDate: item.newsDate,
-          trailerLink: item.trailerLink,
-          seo: {...item.seo}
-        });
-        this.$store.dispatch("loadNews");
-        this.isEditing = false;
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    cancelUpdate() {
-      this.isEditing = false;
+      this.$router.push("news_page");
     },
     editNewsInfo(item) {
-      console.log(item);
       this.isEditing = true;
+      this.newsItem = item;
+    },
+    cancelUpdate(data) {
+      this.isEditing = data;
     },
     deleteNews(item) {
       try {
-        this.$store.dispatch("removeNews", item.newsId);
+        if(confirm("Delete ?")) {
+          this.$store.dispatch("removeNews", item.newsId);
         this.$store.dispatch("loadNews");
+        } else {
+          return
+        }
+        
       } catch (err) {
         console.log(err);
       }
-      this.news.splice(item, 1);
     },
   },
 };
@@ -133,6 +103,10 @@ export default {
 <style scoped>
 .news {
   position: relative;
+}
+.news h2 {
+  text-align: center;
+    margin: 20px;
 }
 .loader {
   position: absolute;

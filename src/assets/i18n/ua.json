@@ -1,0 +1,91 @@
+{
+    "filmName": "Назва фільму",
+    "description": "Опис",
+    "mainImage": "Головна картинка",
+    "add": "Додати",
+    "delete": "Видалити",
+    "update": "Оновити",
+    "chooseBtn": "Обрати зображення",
+    "imageGallery": "Галерея зображень",
+    "trailerLink": "Посилання на трейлер",
+    "filmTypes": "Типи кіно",
+    "title": "Заголовок",
+    "keywords": "Ключові слова",
+    "save": "Зберегти",
+    "cancel": "Відмінити",
+    "backToBaseVersion": "Повернути базову версію",
+    "soonShawn": "Скоро покажуть",
+    "sidebar": {
+        "statistics": "Статистика",
+        "banners": "Банера/Cлайдери",
+        "films": "Фільми",
+        "filmPage": "Сторінка фільму",
+        "cinemas": "Кінотеатри",
+        "cinemaCard": "Картка кінотеатру",
+        "news": "Новини",
+        "newsPage": "Сторінка новин",
+        "discounts": "Акції",
+        "discountsPage": "Сторінка акції",
+        "pages": "Сторінки",
+        "users": "Користувачі",
+        "mailing": "Розсилка"
+    },
+    "banners": {
+        "mainBanners": "На головній верх",
+        "addBanner": "Додати банер",
+        "speed": "Швидкість обертання",
+        "throughBanner": "Наскрізний банер на задньому фоні",
+        "photoBack": "Фото на фоні",
+        "simpleBack": "Простий фон",
+        "newsDiscountBanners": "На головній Новини Акції",
+        "noBannersYet": "Банерів ще нема ...",
+        "chooseImage": "Оберіть зображення"
+    },
+    "movies": {
+        "moviesList": "Список фільмів поточних",
+        "soonMoviesList": "Список фільмів які скоро з'являться"
+    },
+    "cinemas": {
+        "cinemasList": "Список кінотеатрів",
+        "cinemasName": "Назва кінотеатру",
+        "conditions": "Умови",
+        "logo": "Логотип",
+        "mainBannerImage": "Фото верхнього банера",
+        "addHall": "Додати зал",
+        "table": {
+            "name": "Назва залу",
+            "date": "Дата створення"
+        },
+        "halls": "Зали кінотеатру"
+    },
+    "cinemaHall": {
+        "hallNumber": "Номер залу",
+        "hallDescription": "Опис залу",
+        "hallSchema": "Схема залу",
+        "topBanner": "Верхній баннер"
+    },
+    "news": {
+        "newsList": "Список новин",
+        "newsName": "Назва новини",
+        "newsDate": "Дата публікації",
+        "table": {
+            "name": "Назва новини",
+            "date": "Дата створення",
+            "off": "ВИКЛ"
+        },
+        "noNews": "Поки немає новин",
+        "addNews": "Створити новину"
+    },
+    "promotions": {
+        "promotionsList": "Список акцій",
+        "promotionsName": "Назва акції",
+        "noPromotions": "Поки немає акцій",
+        "addPromotions": "Створити акцію",
+        "table": {
+            "date": "Дата створення",
+            "off": "ВЫКЛ"
+        }
+
+    }
+
+}

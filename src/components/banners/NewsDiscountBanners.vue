@@ -7,8 +7,8 @@
         <img :src="banner.imageUrl" height="150" />
       </div>
       <div class="selectImage">
-        <button class="btn btn-secondary mt-2" @click="onPickFile">
-          Choose image
+        <button v-if="!banner.imageUrl" class="btn btn-secondary mt-2" @click="onPickFile">
+          {{ $t('banners.chooseImage') }}
         </button>
         <input
           type="file"
@@ -50,11 +50,10 @@ export default {
         this.banner.imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(files[0]);
-      this.banner.image = files[0];
       console.log(this.banner);
     },
     removeImage() {
-      this.banner.image = null;
+      this.banner.imageUrl = null;
     },
     removeBanner() {
       this.storeNDBanners.splice(this.storeNDBanners.indexOf(this.banner), 1)

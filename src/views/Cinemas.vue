@@ -4,23 +4,37 @@
       <div class="loader">
         <Spinner v-if="loading" />
       </div>
-      <h2>Список кинотеатров</h2>
+      <h2>{{ $t("cinemas.cinemasList") }}</h2>
       <div v-for="cinema in cinemas" :key="cinema.cinemaId" class="cinemas">
         <CinemaPopupInfo
           @changePopupStatus="isPopupVisible = $event"
           v-if="isPopupVisible"
           :cinema="cinema"
         />
+        <EditCinemaPage
+          @changePopupStatus="isEditCinema = $event"
+          v-if="isEditCinema"
+          :cinema="cinema"
+          :isHallEditing="isHallEditing"
+          @updatedCinemaPage="updatedCinemaPage"
+          @cancelEditingCinema="cancelEditingCinema"
+        />
         <div
           @click="getInfo"
-          @mouseenter="removeCinema = true"
-          @mouseleave="removeCinema = false"
+          @mouseenter="removeCinema = true; editCinemaIcon = true"
+          @mouseleave="removeCinema = false; editCinemaIcon = false"
           class="cinema"
         >
           <i
             v-if="removeCinema"
             @click="onRemoveCinema(cinema)"
             class="fas fa-trash"
+          ></i>
+          <i
+            v-if="editCinemaIcon"
+            @click="editCinema"
+            class="fas fa-edit"
+            :class="{ editCinema: editCinemaIcon }"
           ></i>
           <img :src="cinema.logo" alt="logo" />
           <h3>{{ cinema.cinemaName }}</h3>
@@ -33,18 +47,23 @@
 <script>
 import Spinner from "../components/Spinner";
 import CinemaPopupInfo from "../components/cinemas/CinemaPopupInfo";
+import EditCinemaPage from "../components/cinemas/EditCinemaPage";
 
 export default {
   name: "Cinemas",
   data() {
     return {
       removeCinema: false,
+      editCinemaIcon: false,
       isPopupVisible: false,
+      isEditCinema: false,
+      isHallEditing: false
     };
   },
   components: {
     Spinner,
     CinemaPopupInfo,
+    EditCinemaPage
   },
   computed: {
     cinemas() {
@@ -58,6 +77,9 @@ export default {
     this.$store.dispatch("loadCinemas");
   },
   methods: {
+    cancelEditingCinema(data) {
+      this.isEditCinema = data
+    },
     getInfo() {
       if (!this.filmCard) {
         this.isPopupVisible = true;
@@ -76,11 +98,24 @@ export default {
         this.isPopupVisible = true;
       }
     },
+    editCinema(e) {
+      if (confirm('Edit ?')) {
+        e.stopPropagation();
+        this.isEditCinema = true
+        this.isHallEditing = true
+      }
+    },
+    updatedCinemaPage(data) {
+      this.isEditCinema = data
+    }
   },
 };
 </script>
 
 <style scoped>
+.editCinema{
+  margin-right: 20px;
+}
 .cinemas-container {
   padding: 20px;
   position: relative;

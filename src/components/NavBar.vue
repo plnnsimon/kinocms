@@ -13,6 +13,14 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+      <div class="languages">
+        <img v-if="lang == 'ru'" src="../assets/i18n/ru.png" alt="ru" />
+        <img v-else src="../assets/i18n/ua.png" alt="ua" />
+        <select v-model="lang" @change="handleChange($event)">
+          <option value="ru">Русский</option>
+          <option value="ua">Украинский</option>
+        </select>
+      </div>
       <!-- Navbar Search -->
       <i class="fas fa-user user"></i>
       <p>Administrator</p>
@@ -32,15 +40,25 @@
 </template>
 
 <script>
-// import {mapGetters} from 'vuex'
 export default {
   name: "NavBar",
-  // computed: mapGetters(['loading']),
+  data() {
+    return {
+      lang: localStorage.getItem("lang") || "ru",
+    };
+  },
   methods: {
     onSignOut() {
-      this.$store.dispatch("signOut")
-    }
-  }
+      this.$store.dispatch("signOut");
+    },
+    handleChange(event) {
+      localStorage.setItem("lang", event.target.value);
+      this.$i18n.locale = event.target.value;
+      this.$router.push({
+        params: { lang: event.target.value },
+      });
+    },
+  },
 };
 </script>
 
@@ -57,5 +75,19 @@ p {
 }
 .navbar-nav {
   align-items: center;
+}
+.languages img {
+  width: 30px;
+  margin-right: 10px;
+}
+select {
+  background: transparent;
+  color: white;
+  outline: none;
+  border: none;
+  margin-right: 10px;
+}
+option {
+  color: black;
 }
 </style>

@@ -35,6 +35,7 @@ export default {
 .body {
   min-height: 100vh;
   background-color: #f4f6f9;
+  overflow: auto;
 }
 .content {
   padding: 10px;

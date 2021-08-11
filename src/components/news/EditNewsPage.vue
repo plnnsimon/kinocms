@@ -1,9 +1,9 @@
 <template>
-  <div class="news-page">
+  <div class="edit-news-page">
     <div class="switcher">
       <p>Статус:</p>
       <label class="switch">
-        <input v-model="news_page.checked" type="checkbox" />
+        <input v-model="newsItem.checked" type="checkbox" />
         <span class="slider round"></span>
       </label>
     </div>
@@ -12,7 +12,7 @@
         <div class="film-name">
           <label for="film-name">{{ $t("news.newsName") }}</label>
           <input
-            v-model="news_page.newsTitle"
+            v-model="newsItem.newsTitle"
             type="text"
             id="film-name"
             placeholder="Название новости"
@@ -22,7 +22,7 @@
           <p>{{ $t("news.newsDate") }}</p>
           <input
             type="date"
-            v-model="news_page.newsDate"
+            v-model="newsItem.newsDate"
             placeholder="8/22/2021"
           />
         </div>
@@ -31,7 +31,7 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="news_page.newsDescription"
+          v-model="newsItem.description"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
@@ -42,24 +42,24 @@
         <div class="images">
           <div
             class="gallery-image"
-            v-for="(image, index) in news_page.imageGallery"
+            v-for="(image, index) in newsItem.imageGallery"
             :key="index"
           >
             <i
               class="fas fa-trash-alt"
               @click="removeGalleryImage(index)"
-              v-if="news_page.imageGallery[index].imageUrl"
+              v-if="newsItem.imageGallery[index].imageUrl"
             ></i>
             <input
               :index="index"
-              v-if="!news_page.imageGallery[index].imageUrl"
+              v-if="!newsItem.imageGallery[index].imageUrl"
               type="file"
               @change="onGalleryImageSelected(index)"
               ref="galleryImageFile"
             />
             <img
-              v-if="news_page.imageGallery[index].imageUrl"
-              :src="news_page.imageGallery[index].imageUrl"
+              v-if="newsItem.imageGallery[index].imageUrl"
+              :src="newsItem.imageGallery[index].imageUrl"
             />
           </div>
         </div>
@@ -71,7 +71,7 @@
       <div class="trailer">
         <label for="trailer">{{ $t("trailerLink") }}</label>
         <input
-          v-model="news_page.trailerLink"
+          v-model="newsItem.trailerLink"
           type="text"
           id="trailer"
           :placeholder="$t('mainImage') + ' в youtube'"
@@ -82,28 +82,28 @@
         <form>
           <label for="url">URL: </label>
           <input
-            v-model="news_page.seo.url"
+            v-model="newsItem.seo.url"
             type="text"
             id="url"
             placeholder="URL"
           />
           <label for="title">{{ $t("title") }}: </label>
           <input
-            v-model="news_page.seo.title"
+            v-model="newsItem.seo.title"
             type="text"
             id="title"
             :placeholder="$t('title')"
           />
           <label for="keywords">{{ $t("keywords") }}</label>
           <input
-            v-model="news_page.seo.keywords"
+            v-model="newsItem.seo.keywords"
             type="text"
             id="keywords"
             :placeholder="$t('keywords')"
           />
           <label for="description">{{ $t("description") }}: </label>
           <textarea
-            v-model="news_page.seo.description"
+            v-model="newsItem.seo.description"
             type="text"
             id="description"
             :placeholder="$t('description')"
@@ -111,7 +111,12 @@
         </form>
       </div>
       <div class="buttons">
-        <button @click="savePage" class="btn btn-primary">{{ $t("save") }}</button>
+        <button @click="updateNews" class="btn btn-primary">
+          {{ $t("update") }}
+        </button>
+        <button @click="cancelUpdate" class="btn btn-primary">
+          {{ $t("cancel") }}
+        </button>
       </div>
     </div>
   </div>
@@ -119,30 +124,15 @@
 
 <script>
 export default {
-  name: "NewsPage",
+  name: "EditNewsPage",
   data() {
-    return {
-      news_page: {
-        imageGallery: [],
-        checked: false,
-        newsTitle: "",
-        newsDate: "",
-        newsDescription: "",
-        trailerLink: "",
-        isEditing: false,
-        seo: {
-          url: "",
-          title: "",
-          keywords: "",
-          description: "",
-        },
-      },
-    };
+    return {};
   },
+  props: ["newsItem"],
   mounted() {},
   methods: {
     addImage() {
-      this.news_page.imageGallery.push({
+      this.newsItem.imageGallery.push({
         imageUrl: "",
       });
     },
@@ -153,27 +143,37 @@ export default {
     onGalleryImageSelected(index) {
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.news_page.imageGallery[index].imageUrl = fileReader.result;
+        this.newsItem.imageGallery[index].imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(this.$refs.galleryImageFile[0].files[0]);
     },
     removeGalleryImage(index) {
-      this.news_page.imageGallery.splice(index, 1);
+      this.newsItem.imageGallery.splice(index, 1);
     },
-    savePage() {
-      this.$store.dispatch("addNews", this.news_page);
+    updateNews() {
+      this.$store.dispatch("updateNews", this.newsItem);
+      this.$store.dispatch('loadNews')
+      this.$emit("updatedNews", false);
+    },
+    cancelUpdate() {
+      this.$emit("cancelUpdate", false);
     },
   },
 };
 </script>
 
 <style scoped>
-.news-page {
+.edit-news-page {
   min-height: 709.021px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  position: relative;
+  position: absolute;
+  background: white;
+  z-index: 9;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 .language {
   display: flex;

@@ -2,53 +2,43 @@
   <div class="movie-picture-page">
     <div class="container">
       <div class="film-name">
-        <label for="film-name">{{ $t("cinemas.cinemasName") }}</label>
+        <label for="film-name">{{ $t("cinemaHall.hallNumber") }}</label>
         <input
-          v-model="cinemaCard.cinemaName"
+          v-model="editingHall.hallName"
           type="text"
           id="cinema-name"
-          :placeholder="$t('cinemas.cinemasName')"
+          placeholder="8 зал"
         />
       </div>
       <div class="description">
-        <label for="film-description">{{ $t("description") }}</label>
+        <label for="film-description">{{ $t("cinemaHall.hallDescription") }}</label>
         <textarea
-          v-model="cinemaCard.cinemaDescription"
+          v-model="editingHall.hallDescription"
           type="text"
           id="cinema-description"
-          :placeholder="$t('description')"
+          :placeholder='$t("cinemaHall.hallDescription")'
         ></textarea>
       </div>
-      <div class="description">
-        <label for="film-description">{{ $t("cinemas.conditions") }}</label>
-        <textarea
-          v-model="cinemaCard.cinemaConditions"
-          type="text"
-          id="cinema-conditions"
-          :placeholder="$t('cinemas.conditions')"
-        ></textarea>
-      </div>
+      
       <div class="main-picture">
-        <p>{{ $t("cinemas.logo") }}</p>
-        <img class="cinema-logo" :src="cinemaCard.logo.imageUrl" alt="logo" />
+        <p>{{ $t("cinemaHall.hallSchema") }}</p>
+        <img class="cinema-logo" :src="editingHall.scheme.imageUrl" alt="scheme" />
         <input
           type="file"
           style="display: none"
-          ref="logoFileInput"
-          @change="onLogoSelected"
+          ref="schemeFileInput"
+          @change="onSchemeSelected"
         />
-        <button @click="onPickLogoFile" class="btn btn-primary">
+        <button @click="onPickSchemeFile" class="btn btn-primary">
           {{ $t("add") }}
         </button>
-        <button @click="removeLogoImage" class="btn btn-danger">
-          {{ $t("delete") }}
-        </button>
+        <button @click="removeSchemeImage" class="btn btn-danger">{{ $t("delete") }}</button>
       </div>
       <div class="main-picture">
-        <p>{{ $t("cinemas.mainBannerImage") }}</p>
+        <p>{{ $t("cinemaHall.topBanner") }}</p>
         <img
           class="cinema-banner"
-          :src="cinemaCard.bannerPhoto.imageUrl"
+          :src="editingHall.bannerPhoto.imageUrl"
           alt="banner picture"
         />
         <input
@@ -69,93 +59,57 @@
         <div class="images">
           <div
             class="gallery-image"
-            v-for="(image, index) in cinemaCard.cinemasGallery"
+            v-for="(image, index) in editingHall.cinemaHallGallery"
             :key="index"
           >
             <i
               class="fas fa-trash-alt"
               @click="removeGalleryImage(index)"
-              v-if="cinemaCard.cinemasGallery[index].imageUrl"
+              v-if="editingHall.cinemaHallGallery[index].imageUrl"
             ></i>
             <input
               :index="index"
-              v-if="!cinemaCard.cinemasGallery[index].imageUrl"
+              v-if="!editingHall.cinemaHallGallery[index].imageUrl"
               type="file"
               @change="onGalleryImageSelected(index)"
               ref="galleryImageFile"
             />
             <img
-              v-if="cinemaCard.cinemasGallery[index].imageUrl"
-              :src="cinemaCard.cinemasGallery[index].imageUrl"
+              v-if="editingHall.cinemaHallGallery[index].imageUrl"
+              :src="editingHall.cinemaHallGallery[index].imageUrl"
             />
           </div>
         </div>
-        <button @click="addImage" class="btn btn-primary">
-          {{ $t("add") }}
-        </button>
+        <button @click="addImage" class="btn btn-primary">{{ $t("add") }}</button>
       </div>
-      <div class="table">
-        <CinemaHall
-          v-if="cinemaHallAdding"
-          class="cinemaHall"
-          @cancelCreatingHall="cancelCreatingHall"
-          @savedHall="saveHall"
-        />
-        <EditCinemaHall
-          v-if="isHallEditing"
-          class="cinemaHall"
-          :editingHall="editingHall"
-          @cancelCreatingHall="cancelCreatingHall"
-          @savedHall="saveHall"
-          @updateHall="updateHall"
-        />
-        <table>
-          <tr>
-            <td>{{ $t("cinemas.table.name") }}</td>
-            <td>{{ $t("cinemas.table.date") }}</td>
-          </tr>
-          <tr v-for="(hall, index) in cinemaCard.cinemaHalls" :key="index">
-            <td>{{ hall.hallName }}</td>
-            <td>{{ hall.creationDate }}</td>
-            <i @click="editHallInfo(hall)" class="fas fa-pen"></i>
-            <i
-              @click="deleteHallInfo(index)"
-              class="fas fa-trash-alt"
-              style="right: -60px"
-            ></i>
-          </tr>
-        </table>
-        <button @click="addCinemaInfo" class="btn btn-primary">
-          <i class="fas fa-plus"></i>{{ $t("cinemas.addHall") }}
-        </button>
-      </div>
+      
       <div class="seo">
         <p>SEO блок:</p>
         <form>
           <label for="url">URL: </label>
           <input
-            v-model="cinemaCard.seo.url"
+            v-model="editingHall.seo.url"
             type="text"
             id="url"
             placeholder="URL"
           />
-          <label for="title">{{ $t("title") }}: </label>
+          <label for="title">{{ $t("add") }}: </label>
           <input
-            v-model="cinemaCard.seo.title"
+            v-model="editingHall.seo.title"
             type="text"
             id="title"
             :placeholder="$t('title')"
           />
           <label for="keywords">{{ $t("keywords") }}: </label>
           <input
-            v-model="cinemaCard.seo.keywords"
+            v-model="editingHall.seo.keywords"
             type="text"
             id="keywords"
             :placeholder="$t('keywords')"
           />
           <label for="description">{{ $t("description") }}: </label>
           <textarea
-            v-model="cinemaCard.seo.description"
+            v-model="editingHall.seo.description"
             type="text"
             id="description"
             :placeholder="$t('description')"
@@ -163,32 +117,25 @@
         </form>
       </div>
       <div class="buttons">
-        <button @click="savePage" class="btn btn-primary">
-          {{ $t("save") }}
-        </button>
+        <button @click="updatePage" class="btn btn-primary">{{ $t("update") }}</button>
+        <button @click="cancelCreatingHall" class="btn btn-primary">{{ $t("cancel") }}</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import CinemaHall from "./CinemaHall";
-import EditCinemaHall from "./EditCinemaHall";
-
 export default {
   name: "CinemaCard",
-  components: {
-    CinemaHall,
-    EditCinemaHall
-  },
+  props: ['editingHall'],
   data() {
     return {
-      cinemaCard: {
-        cinemasGallery: [],
-        cinemaName: "",
-        cinemaDescription: "",
-        cinemaConditions: "",
-        logo: {
+      cinemaHall: {
+        creationDate: new Date().toLocaleDateString(),
+        cinemaHallGallery: [],
+        hallName: "",
+        hallDescription: "",
+        scheme: {
           selectedFile: null,
           imageUrl: "",
           image: null,
@@ -204,116 +151,81 @@ export default {
           keywords: "",
           description: "",
         },
-        cinemaHalls: [],
       },
-      cinemaHallAdding: false,
-      editingHall: null,
-      isHallEditing: false,
     };
   },
   mounted() {},
   methods: {
-    saveHall(cinemaHall) {
-      this.cinemaCard.cinemaHalls.push(cinemaHall);
-      this.cinemaHallAdding = false;
+    languageActive() {},
+    onPickSchemeFile() {
+      this.$refs.schemeFileInput.click();
     },
-    updateHall(cinemaHall) {
-      this.cinemaCard.cinemaHalls.filter(el => {
-        el == cinemaHall
-      });
-      this.isHallEditing = false;
-    },
-    cancelCreatingHall(data) {
-      this.cinemaHallAdding = data;
-      this.isHallEditing = data
-    },
-    onPickLogoFile() {
-      this.$refs.logoFileInput.click();
-    },
-    onLogoSelected(event) {
+    onSchemeSelected(event) {
       const files = event.target.files;
-      this.cinemaCard.logo.selectedFile = files[0].name;
-      if (this.cinemaCard.logo.selectedFile.indexOf(".") <= 0) {
+      this.cinemaHall.scheme.selectedFile = files[0].name;
+      if (this.cinemaHall.scheme.selectedFile.indexOf(".") <= 0) {
         return alert("Please add a valid file");
       }
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.cinemaCard.logo.imageUrl = fileReader.result;
+        this.cinemaHall.scheme.imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(files[0]);
-      this.cinemaCard.logo.image = files[0];
+      this.cinemaHall.scheme.image = files[0];
     },
-    removeLogoImage() {
-      this.cinemaCard.logo.imageUrl = "";
+    removeSchemeImage() {
+      this.cinemaHall.scheme.imageUrl = "";
     },
     onPickBannerFile() {
       this.$refs.bannerFileInput.click();
     },
     onBannerSelected(event) {
       const files = event.target.files;
-      this.cinemaCard.bannerPhoto.selectedFile = files[0].name;
-      if (this.cinemaCard.bannerPhoto.selectedFile.indexOf(".") <= 0) {
+      this.cinemaHall.bannerPhoto.selectedFile = files[0].name;
+      if (this.cinemaHall.bannerPhoto.selectedFile.indexOf(".") <= 0) {
         return alert("Please add a valid file");
       }
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.cinemaCard.bannerPhoto.imageUrl = fileReader.result;
+        this.cinemaHall.bannerPhoto.imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(files[0]);
-      this.cinemaCard.bannerPhoto.image = files[0];
+      this.cinemaHall.bannerPhoto.image = files[0];
     },
     addImage() {
-      this.cinemaCard.cinemasGallery.push({
+      this.cinemaHall.cinemaHallGallery.push({
         imageUrl: "",
       });
     },
     onGalleryImageSelected(index) {
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.cinemaCard.cinemasGallery[index].imageUrl = fileReader.result;
+        this.cinemaHall.cinemaHallGallery[index].imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(this.$refs.galleryImageFile[0].files[0]);
     },
     removeGalleryImage(index) {
-      this.cinemaCard.cinemasGallery.splice(index, 1);
+      this.cinemaHall.cinemaHallGallery.splice(index, 1);
     },
     removeBannerImage() {
-      this.cinemaCard.bannerPhoto.imageUrl = "";
+      this.cinemaHall.bannerPhoto.imageUrl = "";
     },
-    addCinemaInfo(index) {
-      this.hallId = index
-      this.cinemaHallAdding = true;
+    updatePage() {
+      this.$emit('updateHall', this.editingHall)
     },
-    
-    editHallInfo(hall) {
-      this.isHallEditing = true;
-      this.editingHall = hall;
-    },
-    deleteHallInfo(index) {
-      this.cinemaCard.cinemaHalls.splice(index, 1);
-    },
-    savePage() {
-      this.$store.dispatch("addCinema", this.cinemaCard);
-    },
+    cancelCreatingHall() {
+      this.$emit('cancelCreatingHall', false)
+    }
   },
 };
 </script>
 
 <style scoped>
-.cinemaHall {
-  background: white;
-  z-index: 1;
-  top: 0;
-  position: absolute !important;
-  width: 100%;
-  height: 100%;
-}
 .movie-picture-page {
   min-height: 709.021px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  position: relative;
 }
 .language {
   display: flex;
@@ -436,25 +348,5 @@ label {
 }
 .cinema-logo {
   width: 200px;
-}
-.table {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.table td {
-  border-width: 2px;
-}
-table {
-  width: 400px;
-  position: relative;
-}
-table i {
-  position: absolute;
-  cursor: pointer;
-}
-table i:hover {
-  color: rgb(117, 117, 117);
 }
 </style>

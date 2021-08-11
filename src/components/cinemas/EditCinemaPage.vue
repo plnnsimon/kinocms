@@ -1,10 +1,10 @@
 <template>
-  <div class="movie-picture-page">
+  <div class="editing-cinema-page">
     <div class="container">
       <div class="film-name">
         <label for="film-name">{{ $t("cinemas.cinemasName") }}</label>
         <input
-          v-model="cinemaCard.cinemaName"
+          v-model="cinema.cinemaName"
           type="text"
           id="cinema-name"
           :placeholder="$t('cinemas.cinemasName')"
@@ -13,7 +13,7 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="cinemaCard.cinemaDescription"
+          v-model="cinema.description"
           type="text"
           id="cinema-description"
           :placeholder="$t('description')"
@@ -22,7 +22,7 @@
       <div class="description">
         <label for="film-description">{{ $t("cinemas.conditions") }}</label>
         <textarea
-          v-model="cinemaCard.cinemaConditions"
+          v-model="cinema.conditions"
           type="text"
           id="cinema-conditions"
           :placeholder="$t('cinemas.conditions')"
@@ -30,7 +30,7 @@
       </div>
       <div class="main-picture">
         <p>{{ $t("cinemas.logo") }}</p>
-        <img class="cinema-logo" :src="cinemaCard.logo.imageUrl" alt="logo" />
+        <img class="cinema-logo" :src="cinema.logo" alt="logo" />
         <input
           type="file"
           style="display: none"
@@ -48,7 +48,7 @@
         <p>{{ $t("cinemas.mainBannerImage") }}</p>
         <img
           class="cinema-banner"
-          :src="cinemaCard.bannerPhoto.imageUrl"
+          :src="cinema.bannerPhoto"
           alt="banner picture"
         />
         <input
@@ -57,36 +57,39 @@
           ref="bannerFileInput"
           @change="onBannerSelected"
         />
-        <button @click="onPickBannerFile" class="btn btn-primary">
+        <div class="buttons">
+          <button @click="onPickBannerFile" class="btn btn-primary">
           {{ $t("add") }}
         </button>
         <button @click="removeBannerImage" class="btn btn-danger">
           {{ $t("delete") }}
         </button>
+        </div>
+        
       </div>
       <div class="picture-gallery">
         <p>{{ $t("imageGallery") }}</p>
         <div class="images">
           <div
             class="gallery-image"
-            v-for="(image, index) in cinemaCard.cinemasGallery"
+            v-for="(image, index) in cinema.cinemasGallery"
             :key="index"
           >
             <i
               class="fas fa-trash-alt"
               @click="removeGalleryImage(index)"
-              v-if="cinemaCard.cinemasGallery[index].imageUrl"
+              v-if="cinema.cinemasGallery[index].imageUrl"
             ></i>
             <input
               :index="index"
-              v-if="!cinemaCard.cinemasGallery[index].imageUrl"
+              v-if="!cinema.cinemasGallery[index].imageUrl"
               type="file"
               @change="onGalleryImageSelected(index)"
               ref="galleryImageFile"
             />
             <img
-              v-if="cinemaCard.cinemasGallery[index].imageUrl"
-              :src="cinemaCard.cinemasGallery[index].imageUrl"
+              v-if="cinema.cinemasGallery[index].imageUrl"
+              :src="cinema.cinemasGallery[index].imageUrl"
             />
           </div>
         </div>
@@ -102,19 +105,19 @@
           @savedHall="saveHall"
         />
         <EditCinemaHall
-          v-if="isHallEditing"
-          class="cinemaHall"
-          :editingHall="editingHall"
           @cancelCreatingHall="cancelCreatingHall"
           @savedHall="saveHall"
           @updateHall="updateHall"
+          v-if="isHallEditing"
+          class="cinemaHall"
+          :editingHall="editingHall"
         />
         <table>
           <tr>
             <td>{{ $t("cinemas.table.name") }}</td>
             <td>{{ $t("cinemas.table.date") }}</td>
           </tr>
-          <tr v-for="(hall, index) in cinemaCard.cinemaHalls" :key="index">
+          <tr v-for="(hall, index) in cinema.cinemaHalls" :key="index">
             <td>{{ hall.hallName }}</td>
             <td>{{ hall.creationDate }}</td>
             <i @click="editHallInfo(hall)" class="fas fa-pen"></i>
@@ -134,37 +137,40 @@
         <form>
           <label for="url">URL: </label>
           <input
-            v-model="cinemaCard.seo.url"
+            v-model="cinema.seo.url"
             type="text"
             id="url"
             placeholder="URL"
           />
           <label for="title">{{ $t("title") }}: </label>
           <input
-            v-model="cinemaCard.seo.title"
+            v-model="cinema.seo.title"
             type="text"
             id="title"
             :placeholder="$t('title')"
           />
           <label for="keywords">{{ $t("keywords") }}: </label>
           <input
-            v-model="cinemaCard.seo.keywords"
+            v-model="cinema.seo.keywords"
             type="text"
             id="keywords"
             :placeholder="$t('keywords')"
           />
           <label for="description">{{ $t("description") }}: </label>
           <textarea
-            v-model="cinemaCard.seo.description"
+            v-model="cinema.seo.description"
             type="text"
             id="description"
             :placeholder="$t('description')"
           ></textarea>
         </form>
       </div>
-      <div class="buttons">
-        <button @click="savePage" class="btn btn-primary">
-          {{ $t("save") }}
+      <div class="bottom-buttons">
+        <button @click="updateCinema" class="w-25 mr-3 btn btn-primary">
+          {{ $t("update") }}
+        </button>
+        <button @click="cancelEditing" class="w-25 btn btn-primary">
+          {{ $t("cancel") }}
         </button>
       </div>
     </div>
@@ -176,50 +182,32 @@ import CinemaHall from "./CinemaHall";
 import EditCinemaHall from "./EditCinemaHall";
 
 export default {
-  name: "CinemaCard",
+  name: "EditCinemaPage",
   components: {
     CinemaHall,
-    EditCinemaHall
+    EditCinemaHall,
   },
+  props: ["cinema"],
   data() {
     return {
-      cinemaCard: {
-        cinemasGallery: [],
-        cinemaName: "",
-        cinemaDescription: "",
-        cinemaConditions: "",
-        logo: {
-          selectedFile: null,
-          imageUrl: "",
-          image: null,
-        },
-        bannerPhoto: {
-          selectedFile: null,
-          imageUrl: "",
-          image: null,
-        },
-        seo: {
-          url: "",
-          title: "",
-          keywords: "",
-          description: "",
-        },
-        cinemaHalls: [],
-      },
       cinemaHallAdding: false,
       editingHall: null,
       isHallEditing: false,
     };
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
+    cancelEditing() {
+      this.$emit('cancelEditingCinema', false)
+    },
     saveHall(cinemaHall) {
-      this.cinemaCard.cinemaHalls.push(cinemaHall);
+      this.cinema.cinemaHalls.push(cinemaHall);
       this.cinemaHallAdding = false;
     },
     updateHall(cinemaHall) {
-      this.cinemaCard.cinemaHalls.filter(el => {
-        el == cinemaHall
+      this.cinema.cinemaHalls.filter((el) => {
+        el == cinemaHall;
       });
       this.isHallEditing = false;
     },
@@ -232,68 +220,68 @@ export default {
     },
     onLogoSelected(event) {
       const files = event.target.files;
-      this.cinemaCard.logo.selectedFile = files[0].name;
-      if (this.cinemaCard.logo.selectedFile.indexOf(".") <= 0) {
+      this.cinema.logo.selectedFile = files[0].name;
+      if (this.cinema.logo.selectedFile.indexOf(".") <= 0) {
         return alert("Please add a valid file");
       }
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.cinemaCard.logo.imageUrl = fileReader.result;
+        this.cinema.logo.imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(files[0]);
-      this.cinemaCard.logo.image = files[0];
+      this.cinema.logo.image = files[0];
     },
     removeLogoImage() {
-      this.cinemaCard.logo.imageUrl = "";
+      this.cinema.logo.imageUrl = "";
     },
     onPickBannerFile() {
       this.$refs.bannerFileInput.click();
     },
     onBannerSelected(event) {
       const files = event.target.files;
-      this.cinemaCard.bannerPhoto.selectedFile = files[0].name;
-      if (this.cinemaCard.bannerPhoto.selectedFile.indexOf(".") <= 0) {
+      this.cinema.bannerPhoto.selectedFile = files[0].name;
+      if (this.cinema.bannerPhoto.selectedFile.indexOf(".") <= 0) {
         return alert("Please add a valid file");
       }
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.cinemaCard.bannerPhoto.imageUrl = fileReader.result;
+        this.cinema.bannerPhoto.imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(files[0]);
-      this.cinemaCard.bannerPhoto.image = files[0];
+      this.cinema.bannerPhoto.image = files[0];
     },
     addImage() {
-      this.cinemaCard.cinemasGallery.push({
+      this.cinema.cinemasGallery.push({
         imageUrl: "",
       });
     },
     onGalleryImageSelected(index) {
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.cinemaCard.cinemasGallery[index].imageUrl = fileReader.result;
+        this.cinema.cinemasGallery[index].imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(this.$refs.galleryImageFile[0].files[0]);
     },
     removeGalleryImage(index) {
-      this.cinemaCard.cinemasGallery.splice(index, 1);
+      this.cinema.cinemasGallery.splice(index, 1);
     },
     removeBannerImage() {
-      this.cinemaCard.bannerPhoto.imageUrl = "";
+      this.cinema.bannerPhoto.imageUrl = "";
     },
-    addCinemaInfo(index) {
-      this.hallId = index
+    addCinemaInfo() {
       this.cinemaHallAdding = true;
     },
-    
     editHallInfo(hall) {
       this.isHallEditing = true;
       this.editingHall = hall;
     },
     deleteHallInfo(index) {
-      this.cinemaCard.cinemaHalls.splice(index, 1);
+      this.cinema.cinemaHalls.splice(index, 1);
     },
-    savePage() {
-      this.$store.dispatch("addCinema", this.cinemaCard);
+    updateCinema() {
+      this.$store.dispatch("updateCinema", this.cinema);
+      this.$store.dispatch('loadCinemas')
+      this.$emit("updatedCinemaPage", false)
     },
   },
 };
@@ -308,12 +296,17 @@ export default {
   width: 100%;
   height: 100%;
 }
-.movie-picture-page {
+.editing-cinema-page {
   min-height: 709.021px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  position: relative;
+  position: absolute;
+  z-index: 9;
+  background: white;
+  top: 0;
+  width: 100%;
+  left: 0;
 }
 .language {
   display: flex;
@@ -428,11 +421,14 @@ label {
 }
 .buttons {
   display: flex;
-  justify-content: center;
-  margin: 20px;
+  flex-direction: column;
 }
-.buttons :nth-child(1) {
-  margin-right: 20px;
+.buttons button {
+  margin-bottom: 20px;
+}
+.bottom-buttons {
+  display: flex;
+  justify-content: center;
 }
 .cinema-logo {
   width: 200px;

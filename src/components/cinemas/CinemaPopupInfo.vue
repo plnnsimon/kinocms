@@ -8,20 +8,24 @@
       <div class="info">
         <h1>{{ cinema.cinemaName }}</h1>
         <p class="film-description">{{ cinema.description }}</p>
-        <hr>
+        <hr />
         <p class="film-description">{{ cinema.conditions }}</p>
-        
       </div>
       <div class="imageWrapper">
         <div
-        v-for="(image, index) in cinema.cinemasGallery"
-        :key="index"
-        class="imageGallery"
-      >
-        <img :src="image.imageUrl" />
+          v-for="(image, index) in cinema.cinemasGallery"
+          :key="index"
+          class="imageGallery"
+        >
+          <img :src="image.imageUrl" />
+        </div>
       </div>
+      <div class="cinemaHalls">
+        <p>{{ $t('cinemas.halls') }}</p>
+        <div :cinemaHall="cinemaHall" v-for="(cinemaHall, index) of cinema.cinemaHalls" :key="index">
+          <img :src="cinemaHall.scheme.imageUrl" alt="scheme">
+        </div>
       </div>
-      
     </div>
   </div>
 </template>
@@ -30,6 +34,9 @@
 export default {
   name: "PopupInfo",
   props: ["cinema", "isPopupVisible"],
+  mounted() {
+    console.log(this.cinema);
+  },
   methods: {
     closeInfo() {
       this.$emit("changePopupStatus", false);
@@ -56,6 +63,10 @@ export default {
   align-items: center;
   margin: 100px auto 20px;
   color: white;
+}
+.popup-header img {
+  max-width: 400px;
+  width: 100%;
 }
 .popup-header i {
   position: absolute;
@@ -96,5 +107,8 @@ export default {
   object-fit: cover;
   width: 100%;
   height: 100%;
+}
+.cinemaHalls {
+
 }
 </style>

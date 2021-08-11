@@ -1,6 +1,6 @@
 <template>
   <div class="banners">
-    <h2>На главной верх</h2>
+    <h2>{{ $t('banners.mainBanners') }}</h2>
     <div class="banners-section">
       <div style="marginbottom: 20px; padding: 55px 10px 10px">
         <div class="banners-container">
@@ -16,21 +16,21 @@
           />
 
           <div v-if="storeBanners.length == 0">
-            <p>No banners yet, try to add one</p>
+            <p>{{ $t('banners.noBannersYet') }}</p>
           </div>
         </div>
-        <button @click="onAdd" class="btn btn-dark">Add Banner</button>
+        <button @click="onAdd" class="btn btn-dark">{{ $t('banners.addBanner') }}</button>
       </div>
       <div class="speed">
-        <p>Скорость вращения</p>
+        <p>{{ $t('banners.speed') }}</p>
         <select name="" id="">
-          <option value="5s" selected>5s</option>
-          <option value="10s">10s</option>
-          <option value="15s">15s</option>
-          <option value="20s">20s</option>
+          <option value="5" selected>5s</option>
+          <option value="10">10s</option>
+          <option value="15">15s</option>
+          <option value="20">20s</option>
         </select>
       </div>
-      <button @click="onSave" class="btn btn-dark">Save</button>
+      <button @click="onSave" class="btn btn-dark">{{ $t('save') }}</button>
       <div class="switcher">
         <label class="switch">
           <input type="checkbox" />
@@ -38,11 +38,11 @@
         </label>
       </div>
     </div>
-    <h2>Сквозной баннер на заднем фоне</h2>
+    <h2>{{ $t('banners.throughBanner') }}</h2>
     <div class="banners-section">
       <ThroughBanner />
     </div>
-    <h2>На главной Новости Акции</h2>
+    <h2>{{ $t('banners.newsDiscountBanners') }}</h2>
     <div class="banners-section">
       <div
         class="banners-container"
@@ -58,23 +58,23 @@
           :key="index"
         />
         <div v-if="storeNDBanners.length == 0">
-          <p>No banners yet, try to add one</p>
+          <p>{{ $t('banners.noBannersYet') }}</p>
         </div>
       </div>
       <button @click="onAdd2" class="btn btn-dark" style="margin-left: 10px">
-        Add Banner
+        {{ $t('banners.addBanner') }}
       </button>
 
       <div class="speed">
-        <p>Скорость вращения</p>
+        <p>{{ $t('banners.speed') }}</p>
         <select name="" id="">
-          <option value="5s" selected>5s</option>
-          <option value="10s">10s</option>
-          <option value="15s">15s</option>
-          <option value="20s">20s</option>
+          <option value="5" selected>5s</option>
+          <option value="10">10s</option>
+          <option value="15">15s</option>
+          <option value="20">20s</option>
         </select>
       </div>
-      <button @click="onSave2" class="btn btn-dark">Save</button>
+      <button @click="onSave2" class="btn btn-dark">{{ $t('save') }}</button>
       <div class="switcher">
         <label class="switch">
           <input type="checkbox" />
@@ -120,16 +120,15 @@ export default {
       const banner = {
         selectedFile: null,
         imageUrl: "",
-        image: null,
         url: "",
         text: "",
       };
       this.$store.dispatch("addBanner", banner);
+      console.log(this.$store.getters.storeBanners);
     },
     onSave() {
       const banners = this.$store.getters.storeBanners;
-      this.$store.dispatch("onBannersSave", banners);
-      console.log("saved");
+      this.$store.dispatch("onBannersSave", banners );
     },
 
     onAdd2() {

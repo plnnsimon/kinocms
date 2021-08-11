@@ -3,9 +3,19 @@
     <div class="loader">
       <Spinner v-if="loading" />
     </div>
-    <h2 class="main-title">Список фильмов текущих</h2>
+    <h2 class="main-title">{{ $t("movies.moviesList") }}</h2>
     <div class="movies">
-      <Movie :movie="movie" v-for="(movie, index) of movies" :key="index" />
+      <div v-for="(movie, index) of movies" :key="index">
+          <Movie :movie="movie" v-if="!movie.soonShawn" />
+        
+      </div>
+    </div>
+
+    <h2 class="main-title">{{ $t("movies.soonMoviesList") }}</h2>
+    <div class="movies">
+      <div v-for="movie of movies" :key="movie.filmId">
+        <Movie :movie="movie" v-if="movie.soonShawn" />
+      </div>
     </div>
   </div>
 </template>
@@ -17,7 +27,7 @@ export default {
   name: "Movies",
   components: {
     Movie,
-    Spinner
+    Spinner,
   },
   computed: {
     movies() {

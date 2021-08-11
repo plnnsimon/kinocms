@@ -6,9 +6,9 @@
         <i class="far fa-times-circle" @click="removeImage"></i>
         <img :src="banner.imageUrl" height="150" />
       </div>
-      <div class="selectImage">
+      <div v-if="!banner.imageUrl" class="selectImage">
         <button class="btn btn-secondary mt-2" @click="onPickFile">
-          Choose image
+          {{ $t('banners.chooseImage') }}
         </button>
         <input
           type="file"
@@ -27,7 +27,7 @@
         />
       </div>
       <div class="inputs">
-        <label for="url">Text:</label>
+        <label for="url">Текст:</label>
         <input
           type="text"
           name="text"
@@ -40,13 +40,11 @@
 </template>
 
 <script>
-// import {mapGetters} from 'vuex'
 
 
 export default {
   name: "MainBanners",
   props: ["storeBanners", 'banner'],
-  // computed: mapGetters(['banners', 'banner']),
   methods: {
     onPickFile() {
       this.$refs.fileInput.click();
@@ -62,10 +60,9 @@ export default {
         this.banner.imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(files[0]);
-      this.banner.image = files[0];
     },
     removeImage() {
-      this.banner.image = null;
+      this.banner.imageUrl = null;
     },
     removeBanner() {
       this.storeBanners.splice(this.storeBanners.indexOf(this.banner), 1)

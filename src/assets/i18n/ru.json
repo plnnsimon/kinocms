@@ -1,0 +1,90 @@
+{
+    "filmName": "Название фильма",
+    "description": "Описание",
+    "mainImage": "Главная картинка",
+    "add": "Добавить",
+    "delete": "Удалить",
+    "update": "Обновить",
+    "chooseBtn": "Выбрать картинку",
+    "imageGallery": "Галерея картинок",
+    "trailerLink": "Ссылка на трейлер",
+    "filmTypes": "Типы кино",
+    "title": "Заголовок",
+    "keywords": "Ключевые слова",
+    "save": "Сохранить",
+    "cancel": "Отменить",
+    "backToBaseVersion": "Вернуть базовую версию",
+    "soonShawn": "Скоро покажут",
+    "sidebar": {
+        "statistics": "Статистика",
+        "banners": "Баннера/Cлайдеры",
+        "films": "Фильмы",
+        "filmPage": "Страница фильма",
+        "cinemas": "Кинотеатры",
+        "cinemaCard": "Карточка кинотеатра",
+        "news": "Новости",
+        "newsPage": "Страница новостей",
+        "discounts": "Акции",
+        "discountsPage": "Страница акции",
+        "pages": "Страницы",
+        "users": "Пользователи",
+        "mailing": "Рассылка"
+    },
+    "banners": {
+        "mainBanners": "На главной верх",
+        "addBanner": "Добавить баннер",
+        "speed": "Скорость вращеия",
+        "throughBanner": "Сквозной баннер на заднем фоне",
+        "photoBack": "Фото на фоне",
+        "simpleBack": "Простой фон",
+        "newsDiscountBanners": "На главной Новости Акции",
+        "noBannersYet": "Баннеров еще нет...",
+        "chooseImage": "Выберите картинку"
+    },
+    "movies": {
+        "moviesList": "Список фидьмов текущих",
+        "soonMoviesList": "Список фильмов которые скоро появятся"
+    },
+    "cinemas": {
+        "cinemasList": "Список кинотеатров",
+        "cinemasName": "Название кинотеатра",
+        "conditions": "Условаия",
+        "logo": "Логотип",
+        "mainBannerImage": "Фото верхнего баннера",
+        "addHall": "Добавить зал",
+        "table": {
+            "name": "Название зала",
+            "date": "Дата создания"
+        },
+        "halls": "Залы кинотеатра"
+    },
+    "cinemaHall": {
+        "hallNumber": "Номер зала",
+        "hallDescription": "Описание зала",
+        "hallSchema": "Схема зала",
+        "topBanner": "Верхний баннер"
+    },
+    "news": {
+        "newsList": "Список новостей",
+        "newsName": "Названи новости",
+        "newsDate": "Дата публикации",
+        "table": {
+            "name": "Название зала",
+            "date": "Дата создания",
+            "off": "ВЫКЛ"
+        },
+        "noNews": "Пока новостей нет",
+        "addNews": "Создать новость"
+    },
+    "promotions": {
+        "promotionsList": "Список акций",
+        "promotionsName": "Название акции",
+        "noPromotions": "Пока акций нету",
+        "addPromotions": "Создать акцию",
+        "table": {
+            "date": "Дата создания",
+            "off": "ВЫКЛ"
+        }
+
+    }
+}

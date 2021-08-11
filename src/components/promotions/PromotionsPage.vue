@@ -1,70 +1,65 @@
 <template>
-  <div class="movie-picture-page">
+  <div class="news-page">
+    <div class="switcher">
+      <p>Статус:</p>
+      <label class="switch">
+        <input v-model="promotions.checked" type="checkbox" />
+        <span class="slider round"></span>
+      </label>
+    </div>
     <div class="container">
-      <div class="film-name">
-        <label for="film-name">{{ $t("filmName") }}</label>
-        <input
-          v-model="movie_page.filmName"
-          type="text"
-          id="film-name"
-          :placeholder="$t('filmName')"
-        />
+      <div class="news-top-section">
+        <div class="film-name">
+          <label for="film-name">{{ $t("promotions.promotionsName") }}</label>
+          <input
+            v-model="promotions.promotionsTitle"
+            type="text"
+            id="film-name"
+            :placeholder='$t("promotions.promotionsName")'
+          />
+        </div>
+        <div class="date-input">
+          <p>{{ $t("news.newsDate") }}</p>
+          <input
+            type="date"
+            v-model="promotions.promotionsDate"
+            placeholder="8/22/2021"
+          />
+        </div>
       </div>
+
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="movie_page.movieDescription"
+          v-model="promotions.promotionsDescription"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
         ></textarea>
-      </div>
-      <div class="main-picture">
-        <p>{{ $t("mainImage") }}</p>
-        <img :src="movie_page.picture.imageUrl" alt="picture" />
-        <input
-          type="file"
-          style="display: none"
-          ref="fileInput"
-          @change="onFileSelected"
-        />
-        <button @click="onPickFile" class="btn btn-primary">
-          {{ $t("add") }}
-        </button>
-        <button @click="removeImage" class="btn btn-danger">
-          {{ $t("delete") }}
-        </button>
       </div>
       <div class="picture-gallery">
         <p>{{ $t("imageGallery") }}</p>
         <div class="images">
           <div
             class="gallery-image"
-            v-for="(image, index) in movie_page.imageGallery"
+            v-for="(image, index) in promotions.imageGallery"
             :key="index"
           >
             <i
               class="fas fa-trash-alt"
               @click="removeGalleryImage(index)"
-              v-if="movie_page.imageGallery[index].imageUrl"
+              v-if="promotions.imageGallery[index].imageUrl"
             ></i>
             <input
               :index="index"
-              style="display: none"
+              v-if="!promotions.imageGallery[index].imageUrl"
               type="file"
-              ref="galleryImageFile"
               @change="onGalleryImageSelected(index)"
+              ref="galleryImageFile"
             />
-            <button
-              v-if="!movie_page.imageGallery[index].imageUrl"
-              @click="onPickImageGalleryFile(index)"
-              class="w-100 btn btn-secondary"
-            >
-              {{ $t("chooseBtn") }}
-            </button>
             <img
-              v-if="movie_page.imageGallery[index].imageUrl"
-              :src="movie_page.imageGallery[index].imageUrl"
+              v-if="promotions.imageGallery[index].imageUrl"
+              :src="promotions.imageGallery[index].imageUrl"
             />
           </div>
         </div>
@@ -76,80 +71,39 @@
       <div class="trailer">
         <label for="trailer">{{ $t("trailerLink") }}</label>
         <input
-          v-model="movie_page.trailerLink"
+          v-model="promotions.trailerLink"
           type="text"
           id="trailer"
           :placeholder="$t('mainImage') + ' в youtube'"
         />
-      </div>
-      <div class="film-types">
-        <p>{{ $t("filmTypes") }}</p>
-        <div class="checkbox">
-          <label for="2d">2D</label>
-          <input
-            v-model="movie_page.filmType.twoD"
-            type="checkbox"
-            name="2D"
-            id="2d"
-          />
-        </div>
-        <div class="checkbox">
-          <label for="3d">3D</label>
-          <input
-            v-model="movie_page.filmType.threeD"
-            type="checkbox"
-            name="3D"
-            id="3d"
-          />
-        </div>
-        <div class="checkbox">
-          <label for="imax">IMAX</label>
-          <input
-            v-model="movie_page.filmType.imax"
-            type="checkbox"
-            name="IMAX"
-            id="imax"
-          />
-        </div>
-      </div>
-      <div class="film-types">
-        <p>{{ $t("soonShawn") }}</p>
-        <div class="checkbox">
-          <input
-            v-model="movie_page.soonShawn"
-            type="checkbox"
-            name="soon"
-            id="soon"
-          />
-        </div>
       </div>
       <div class="seo">
         <p>SEO блок:</p>
         <form>
           <label for="url">URL: </label>
           <input
-            v-model="movie_page.seo.url"
+            v-model="promotions.seo.url"
             type="text"
             id="url"
             placeholder="URL"
           />
           <label for="title">{{ $t("title") }}: </label>
           <input
-            v-model="movie_page.seo.title"
+            v-model="promotions.seo.title"
             type="text"
             id="title"
             :placeholder="$t('title')"
           />
-          <label for="keywords">{{ $t("keywords") }}: </label>
+          <label for="keywords">{{ $t("keywords") }}</label>
           <input
-            v-model="movie_page.seo.keywords"
+            v-model="promotions.seo.keywords"
             type="text"
             id="keywords"
             :placeholder="$t('keywords')"
           />
           <label for="description">{{ $t("description") }}: </label>
           <textarea
-            v-model="movie_page.seo.description"
+            v-model="promotions.seo.description"
             type="text"
             id="description"
             :placeholder="$t('description')"
@@ -157,12 +111,7 @@
         </form>
       </div>
       <div class="buttons">
-        <button @click="savePage" class="btn btn-primary">
-          {{ $t("save") }}
-        </button>
-        <button @click="clearPage" class="btn btn-danger">
-          {{ $t("backToBaseVersion") }}
-        </button>
+        <button @click="savePage" class="btn btn-primary">{{ $t("save") }}</button>
       </div>
     </div>
   </div>
@@ -170,29 +119,17 @@
 
 <script>
 export default {
-  name: "MoviePage",
-  mocks: {
-    $t: () => {},
-  },
+  name: "NewsPage",
   data() {
     return {
-      lang: localStorage.getItem("lang") || "ru",
-      movie_page: {
+      promotions: {
         imageGallery: [],
-        filmName: "",
-        movieDescription: "",
+        checked: false,
+        promotionsTitle: "",
+        promotionsDate: "",
+        promotionsDescription: "",
         trailerLink: "",
-        filmType: {
-          twoD: false,
-          threeD: false,
-          imax: false,
-        },
-        soonShawn: false,
-        picture: {
-          selectedFile: null,
-          imageUrl: "",
-          image: null,
-        },
+        isEditing: false,
         seo: {
           url: "",
           title: "",
@@ -202,83 +139,41 @@ export default {
       },
     };
   },
+  mounted() {},
   methods: {
     addImage() {
-      this.movie_page.imageGallery.push({
+      this.promotions.imageGallery.push({
         imageUrl: "",
       });
     },
+    languageActive() {},
     onPickFile() {
       this.$refs.fileInput.click();
-    },
-    onPickImageGalleryFile(index) {
-      this.$refs.galleryImageFile[index].click();
-    },
-    onFileSelected(event) {
-      const files = event.target.files;
-      this.movie_page.picture.selectedFile = files[0].name;
-      if (this.movie_page.picture.selectedFile.indexOf(".") <= 0) {
-        return alert("Please add a valid file");
-      }
-      const fileReader = new FileReader();
-      fileReader.addEventListener("load", () => {
-        this.movie_page.picture.imageUrl = fileReader.result;
-      });
-      fileReader.readAsDataURL(files[0]);
-      this.movie_page.picture.image = files[0];
     },
     onGalleryImageSelected(index) {
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.movie_page.imageGallery[index].imageUrl = fileReader.result;
+        this.promotions.imageGallery[index].imageUrl = fileReader.result;
       });
-      fileReader.readAsDataURL(this.$refs.galleryImageFile[index].files[0]);
+      fileReader.readAsDataURL(this.$refs.galleryImageFile[0].files[0]);
     },
     removeGalleryImage(index) {
-      this.movie_page.imageGallery.splice(index, 1);
-    },
-    removeImage() {
-      this.movie_page.picture.imageUrl = "";
+      this.promotions.imageGallery.splice(index, 1);
     },
     savePage() {
-      let movie = { ...this.movie_page };
-      this.$store.dispatch("addMovie", movie);
-    },
-    clearPage() {
-      console.log(this.movie_page);
-      this.movie_page = {
-        filmName: "",
-        movieDescription: "",
-        trailerLink: "",
-        filmType: {
-          twoD: false,
-          threeD: false,
-          imax: false,
-        },
-        picture: {
-          selectedFile: null,
-          imageUrl: "",
-          image: null,
-        },
-        seo: {
-          url: "",
-          title: "",
-          keywords: "",
-          description: "",
-        },
-      };
-      localStorage.setItem("movie_page", JSON.stringify(this.movie_page));
+      this.$store.dispatch("addPromotions", this.promotions);
     },
   },
 };
 </script>
 
 <style scoped>
-.movie-picture-page {
+.news-page {
   min-height: 709.021px;
   padding: 20px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .language {
   display: flex;
@@ -420,5 +315,104 @@ label {
 }
 .buttons :nth-child(1) {
   margin-right: 20px;
+}
+.news-top-section {
+  display: flex;
+  justify-content: space-between;
+}
+.date-input {
+  justify-content: space-between;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding: 10px;
+  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
+}
+.date-input p {
+  margin-right: 10px;
+}
+.switcher {
+  align-self: flex-end;
+  display: flex;
+  width: 150px;
+  justify-content: space-between;
+}
+.btn-dark {
+  margin: 10px auto;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgb(158, 158, 158);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: rgb(255, 255, 255);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: rgb(62, 255, 56);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #000000;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.speed {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+  display: flex;
+  max-width: 220px;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.speed p {
+  margin: 0;
 }
 </style>

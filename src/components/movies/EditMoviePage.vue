@@ -1,10 +1,11 @@
 <template>
   <div class="movie-picture-page">
+    <i class="close-edit far fa-times-circle" @click="closeInfo"></i>
     <div class="container">
       <div class="film-name">
         <label for="film-name">{{ $t("filmName") }}</label>
         <input
-          v-model="movie_page.filmName"
+          v-model="movie.filmName"
           type="text"
           id="film-name"
           :placeholder="$t('filmName')"
@@ -13,7 +14,7 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="movie_page.movieDescription"
+          v-model="movie.description"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
@@ -21,65 +22,52 @@
       </div>
       <div class="main-picture">
         <p>{{ $t("mainImage") }}</p>
-        <img :src="movie_page.picture.imageUrl" alt="picture" />
+        <img :src="movie.imageUrl" alt="picture" />
         <input
           type="file"
           style="display: none"
           ref="fileInput"
           @change="onFileSelected"
         />
-        <button @click="onPickFile" class="btn btn-primary">
-          {{ $t("add") }}
-        </button>
-        <button @click="removeImage" class="btn btn-danger">
-          {{ $t("delete") }}
-        </button>
+        <button @click="onPickFile" class="btn btn-primary">{{ $t("add") }}</button>
+        <button @click="removeImage" class="btn btn-danger">{{ $t("delete") }}</button>
       </div>
       <div class="picture-gallery">
         <p>{{ $t("imageGallery") }}</p>
         <div class="images">
           <div
             class="gallery-image"
-            v-for="(image, index) in movie_page.imageGallery"
+            v-for="(image, index) in movie.imageGallery"
             :key="index"
           >
             <i
               class="fas fa-trash-alt"
               @click="removeGalleryImage(index)"
-              v-if="movie_page.imageGallery[index].imageUrl"
+              v-if="movie.imageGallery[index].imageUrl"
             ></i>
             <input
               :index="index"
-              style="display: none"
+              v-if="!movie.imageGallery[index].imageUrl"
               type="file"
-              ref="galleryImageFile"
               @change="onGalleryImageSelected(index)"
+              ref="galleryImageFile"
             />
-            <button
-              v-if="!movie_page.imageGallery[index].imageUrl"
-              @click="onPickImageGalleryFile(index)"
-              class="w-100 btn btn-secondary"
-            >
-              {{ $t("chooseBtn") }}
-            </button>
             <img
-              v-if="movie_page.imageGallery[index].imageUrl"
-              :src="movie_page.imageGallery[index].imageUrl"
+              v-if="movie.imageGallery[index].imageUrl"
+              :src="movie.imageGallery[index].imageUrl"
             />
           </div>
         </div>
 
-        <button @click="addImage" class="btn btn-primary">
-          {{ $t("add") }}
-        </button>
+        <button @click="addImage" class="btn btn-primary">{{ $t("add") }}</button>
       </div>
       <div class="trailer">
         <label for="trailer">{{ $t("trailerLink") }}</label>
         <input
-          v-model="movie_page.trailerLink"
+          v-model="movie.trailerLink"
           type="text"
           id="trailer"
-          :placeholder="$t('mainImage') + ' в youtube'"
+         :placeholder="$t('mainImage') + ' в youtube'"
         />
       </div>
       <div class="film-types">
@@ -87,7 +75,7 @@
         <div class="checkbox">
           <label for="2d">2D</label>
           <input
-            v-model="movie_page.filmType.twoD"
+            v-model="movie.filmType.twoD"
             type="checkbox"
             name="2D"
             id="2d"
@@ -96,7 +84,7 @@
         <div class="checkbox">
           <label for="3d">3D</label>
           <input
-            v-model="movie_page.filmType.threeD"
+            v-model="movie.filmType.threeD"
             type="checkbox"
             name="3D"
             id="3d"
@@ -105,7 +93,7 @@
         <div class="checkbox">
           <label for="imax">IMAX</label>
           <input
-            v-model="movie_page.filmType.imax"
+            v-model="movie.filmType.imax"
             type="checkbox"
             name="IMAX"
             id="imax"
@@ -116,7 +104,7 @@
         <p>{{ $t("soonShawn") }}</p>
         <div class="checkbox">
           <input
-            v-model="movie_page.soonShawn"
+            v-model="movie.soonShawn"
             type="checkbox"
             name="soon"
             id="soon"
@@ -128,28 +116,28 @@
         <form>
           <label for="url">URL: </label>
           <input
-            v-model="movie_page.seo.url"
+            v-model="movie.seo.url"
             type="text"
             id="url"
             placeholder="URL"
           />
           <label for="title">{{ $t("title") }}: </label>
           <input
-            v-model="movie_page.seo.title"
+            v-model="movie.seo.title"
             type="text"
             id="title"
             :placeholder="$t('title')"
           />
           <label for="keywords">{{ $t("keywords") }}: </label>
           <input
-            v-model="movie_page.seo.keywords"
+            v-model="movie.seo.keywords"
             type="text"
             id="keywords"
             :placeholder="$t('keywords')"
           />
           <label for="description">{{ $t("description") }}: </label>
           <textarea
-            v-model="movie_page.seo.description"
+            v-model="movie.seo.description"
             type="text"
             id="description"
             :placeholder="$t('description')"
@@ -157,9 +145,7 @@
         </form>
       </div>
       <div class="buttons">
-        <button @click="savePage" class="btn btn-primary">
-          {{ $t("save") }}
-        </button>
+        <button @click="updatePage" class="btn btn-primary">{{ $t("update") }}</button>
         <button @click="clearPage" class="btn btn-danger">
           {{ $t("backToBaseVersion") }}
         </button>
@@ -170,83 +156,54 @@
 
 <script>
 export default {
-  name: "MoviePage",
-  mocks: {
-    $t: () => {},
-  },
-  data() {
-    return {
-      lang: localStorage.getItem("lang") || "ru",
-      movie_page: {
-        imageGallery: [],
-        filmName: "",
-        movieDescription: "",
-        trailerLink: "",
-        filmType: {
-          twoD: false,
-          threeD: false,
-          imax: false,
-        },
-        soonShawn: false,
-        picture: {
-          selectedFile: null,
-          imageUrl: "",
-          image: null,
-        },
-        seo: {
-          url: "",
-          title: "",
-          keywords: "",
-          description: "",
-        },
-      },
-    };
-  },
+  name: "EditMoviePage",
+  props: ["movie"],
   methods: {
     addImage() {
-      this.movie_page.imageGallery.push({
+      this.movie.imageGallery.push({
         imageUrl: "",
       });
     },
+    languageActive() {},
     onPickFile() {
       this.$refs.fileInput.click();
     },
-    onPickImageGalleryFile(index) {
-      this.$refs.galleryImageFile[index].click();
-    },
     onFileSelected(event) {
       const files = event.target.files;
-      this.movie_page.picture.selectedFile = files[0].name;
-      if (this.movie_page.picture.selectedFile.indexOf(".") <= 0) {
+      this.movie.picture.selectedFile = files[0].name;
+      if (this.movie.picture.selectedFile.indexOf(".") <= 0) {
         return alert("Please add a valid file");
       }
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.movie_page.picture.imageUrl = fileReader.result;
+        this.movie.picture.imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(files[0]);
-      this.movie_page.picture.image = files[0];
+      this.movie.picture.image = files[0];
     },
     onGalleryImageSelected(index) {
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.movie_page.imageGallery[index].imageUrl = fileReader.result;
+        this.movie.imageGallery[index].imageUrl = fileReader.result;
       });
-      fileReader.readAsDataURL(this.$refs.galleryImageFile[index].files[0]);
+      fileReader.readAsDataURL(this.$refs.galleryImageFile[0].files[0]);
     },
     removeGalleryImage(index) {
-      this.movie_page.imageGallery.splice(index, 1);
+      this.movie.imageGallery.splice(index, 1);
     },
     removeImage() {
-      this.movie_page.picture.imageUrl = "";
+      this.movie.picture.imageUrl = "";
     },
-    savePage() {
-      let movie = { ...this.movie_page };
-      this.$store.dispatch("addMovie", movie);
+    updatePage() {
+      this.$store.dispatch("updateMovie", this.movie);
+      this.$store.dispatch('loadMovies')
+    },
+    closeInfo() {
+      this.$emit("changeEditStatus", false);
     },
     clearPage() {
-      console.log(this.movie_page);
-      this.movie_page = {
+      console.log(this.movie);
+      this.movie = {
         filmName: "",
         movieDescription: "",
         trailerLink: "",
@@ -267,7 +224,6 @@ export default {
           description: "",
         },
       };
-      localStorage.setItem("movie_page", JSON.stringify(this.movie_page));
     },
   },
 };
@@ -275,15 +231,22 @@ export default {
 
 <style scoped>
 .movie-picture-page {
-  min-height: 709.021px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
+  position: fixed;
+  z-index: 9999;
+  background: rgb(77, 77, 77, 87%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  overflow: auto;
+  padding: 60px;
 }
 .language {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 30px;
+  margin-right: 36px;
 }
 .language button {
   cursor: pointer;
@@ -303,6 +266,8 @@ export default {
 .container {
   display: flex;
   flex-direction: column;
+  background: white;
+  padding: 20px;
 }
 label {
   margin-right: 15px;
@@ -420,5 +385,14 @@ label {
 }
 .buttons :nth-child(1) {
   margin-right: 20px;
+}
+.close-edit {
+  position: absolute;
+    right: 40px;
+    font-size: 30px;
+    cursor: pointer;
+}
+.close-edit:hover {
+  color: rgb(155, 155, 155);
 }
 </style>

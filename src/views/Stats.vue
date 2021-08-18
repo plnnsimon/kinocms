@@ -137,7 +137,8 @@
         <!-- small box -->
         <div class="small-box bg-warning">
           <div class="inner">
-            <h3>44</h3>
+            <Spinner v-if="loading" />
+            <h3 v-if="!loading">{{ users.length }}</h3>
 
             <p>User Registrations</p>
           </div>
@@ -227,7 +228,7 @@
 import PieChart from "../charts/PieChart";
 import LineChart from "../charts/LineChart";
 import SeancesGraph from "../charts/SeancesGraph";
-import { mapGetters } from "vuex";
+import Spinner from '../components/Spinner'
 
 export default {
   name: "Stats",
@@ -235,8 +236,22 @@ export default {
     PieChart,
     LineChart,
     SeancesGraph,
+    Spinner
   },
-  computed: mapGetters(["isLoggedIn"]),
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn
+    },
+    users() {
+      return this.$store.getters.users
+    },
+    loading() {
+      return this.$store.getters.loading
+    }
+  },
+  mounted() {
+    this.$store.dispatch("loadUsers")
+  },
   methods: {},
 };
 </script>

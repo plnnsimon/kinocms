@@ -225,7 +225,6 @@ export default {
     };
   },
   mounted() {
-    console.log(this.admin);
   },
   computed: {
     admin() {

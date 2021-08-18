@@ -60,7 +60,7 @@ export default {
             }
         },
         async loadUsers({ commit }) {
-
+            commit('setLoading', true)
             await firebase.database().ref('users').once('value')
                 .then((data) => {
                     const users = []
@@ -79,6 +79,7 @@ export default {
             firebase.auth().onAuthStateChanged((user) => {
                 if (user) {
                     // Admin is signed in.
+                    console.log(user);
                     commit('setAdmin', user)
                     console.log("signed in");
                     commit('setIsLoggedIn', true)

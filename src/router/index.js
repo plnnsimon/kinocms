@@ -175,6 +175,12 @@ const routes = [{
                     import ( /* webpackChunkName: "about" */ '../components/UserRegistration.vue')
             }
         ]
+    },
+    {
+        path: "*",
+        name: "PageNotFound",
+        component: () =>
+            import ("../components/PageNotFound.vue")
     }
 ]
 

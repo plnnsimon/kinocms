@@ -12,6 +12,10 @@ import "admin-lte/plugins/bs-stepper/css/bs-stepper.min.css";
 import "admin-lte/plugins/bs-stepper/js/bs-stepper.min.js";
 import axios from 'axios'
 import i18n from './i18n'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'datatables.net-bs5'
+import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css'
+
 
 const lang = localStorage.getItem('lang') || 'ru';
 axios.defaults.headers['Accept-Language'] = lang

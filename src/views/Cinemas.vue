@@ -138,9 +138,13 @@ export default {
   margin-right: 20px;
   position: relative;
 }
+.cinema h3 {
+  margin: 10px;
+}
 .cinema img {
   transition: all ease 0.5s;
   opacity: 1;
+  box-shadow: 6px 5px 5px 2px;
 }
 .cinema img:hover {
   transition: all ease 0.5s;

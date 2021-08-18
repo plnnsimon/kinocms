@@ -52,6 +52,7 @@
 <script>
 import firebase from "firebase/app";
 import "firebase/auth";
+import 'firebase/functions'
 
 export default {
   name: "Registration",
@@ -65,6 +66,12 @@ export default {
   },
   methods: {
     handleSubmit() {
+      const addAdminRole = firebase.functions().httpsCallable('addAdminRole')
+      addAdminRole({
+        email: this.email
+      }).then(res => {
+        console.log(res);
+      })
       try {
         const user = firebase
           .auth()

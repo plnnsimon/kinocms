@@ -17,9 +17,9 @@ export default {
 
     },
     actions: {
-        loadMovies({ commit }) {
+        async loadMovies({ commit }) {
             commit('setLoading', true)
-            firebase.database().ref('movies').once('value')
+            await firebase.database().ref('movies').once('value')
                 .then((data) => {
                     const movies = []
                     const obj = data.val()
@@ -27,9 +27,9 @@ export default {
                         movies.push({
                             filmId: key,
                             imageUrl: obj[key].picture.imageUrl,
-                            soonShawn: obj[key].soonShawn,
+                            soonShawn: obj[key].soonShawn || false,
                             filmName: obj[key].filmName,
-                            description: obj[key].movieDescription,
+                            description: obj[key].description,
                             filmType: obj[key].filmType,
                             imageGallery: obj[key].imageGallery || [],
                             seo: obj[key].seo

@@ -30,8 +30,8 @@ export default {
                             logo: obj[key].logo || null,
                             bannerPhoto: obj[key].bannerPhoto || null,
                             cinemaName: obj[key].cinemaName,
-                            description: obj[key].cinemaDescription,
-                            conditions: obj[key].cinemaConditions,
+                            description: obj[key].description,
+                            conditions: obj[key].conditions,
                             cinemasGallery: obj[key].cinemasGallery || [],
                             cinemaHalls: obj[key].cinemaHalls,
                             seo: obj[key].seo

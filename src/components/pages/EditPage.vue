@@ -3,27 +3,19 @@
     <div class="switcher">
       <p>Статус:</p>
       <label class="switch">
-        <input v-model="news_page.checked" type="checkbox" />
+        <input v-model="pageItem.checked" type="checkbox" />
         <span class="slider round"></span>
       </label>
     </div>
     <div class="container">
       <div class="news-top-section">
         <div class="film-name">
-          <label for="film-name">{{ $t("news.newsName") }}</label>
+          <label for="film-name">{{ $t("name") }}</label>
           <input
-            v-model="news_page.newsTitle"
+            v-model="pageItem.title"
             type="text"
             id="film-name"
-            :placeholder='$t("news.newsName")'
-          />
-        </div>
-        <div class="date-input">
-          <p>{{ $t("news.newsDate") }}</p>
-          <input
-            type="date"
-            v-model="news_page.newsDate"
-            placeholder="8/22/2021"
+            :placeholder='$t("name")'
           />
         </div>
       </div>
@@ -31,7 +23,7 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="news_page.newsDescription"
+          v-model="pageItem.description"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
@@ -42,24 +34,24 @@
         <div class="images">
           <div
             class="gallery-image"
-            v-for="(image, index) in news_page.imageGallery"
+            v-for="(image, index) in pageItem.imageGallery"
             :key="index"
           >
             <i
               class="fas fa-trash-alt"
               @click="removeGalleryImage(index)"
-              v-if="news_page.imageGallery[index].imageUrl"
+              v-if="pageItem.imageGallery[index].imageUrl"
             ></i>
             <input
               :index="index"
-              v-if="!news_page.imageGallery[index].imageUrl"
+              v-if="!pageItem.imageGallery[index].imageUrl"
               type="file"
               @change="onGalleryImageSelected(index)"
               ref="galleryImageFile"
             />
             <img
-              v-if="news_page.imageGallery[index].imageUrl"
-              :src="news_page.imageGallery[index].imageUrl"
+              v-if="pageItem.imageGallery[index].imageUrl"
+              :src="pageItem.imageGallery[index].imageUrl"
             />
           </div>
         </div>
@@ -68,100 +60,109 @@
           {{ $t("add") }}
         </button>
       </div>
-      <div class="trailer">
-        <label for="trailer">{{ $t("trailerLink") }}</label>
-        <input
-          v-model="news_page.trailerLink"
-          type="text"
-          id="trailer"
-          :placeholder="$t('mainImage') + ' в youtube'"
-        />
-      </div>
       <div class="seo">
         <p>SEO блок:</p>
         <form>
           <label for="url">URL: </label>
           <input
-            v-model="news_page.seo.url"
+            v-model="pageItem.seo.url"
             type="text"
             id="url"
             placeholder="URL"
           />
           <label for="title">{{ $t("title") }}: </label>
           <input
-            v-model="news_page.seo.title"
+            v-model="pageItem.seo.title"
             type="text"
             id="title"
             :placeholder="$t('title')"
           />
           <label for="keywords">{{ $t("keywords") }}</label>
           <input
-            v-model="news_page.seo.keywords"
+            v-model="pageItem.seo.keywords"
             type="text"
             id="keywords"
             :placeholder="$t('keywords')"
           />
           <label for="description">{{ $t("description") }}: </label>
           <textarea
-            v-model="news_page.seo.description"
+            v-model="pageItem.seo.description"
             type="text"
             id="description"
             :placeholder="$t('description')"
           ></textarea>
         </form>
       </div>
-      <div class="buttons">
-        <button @click="savePage" class="btn btn-primary">{{ $t("save") }}</button>
+      <div class="bottom-buttons">
+        <button @click="updateCinema" class="w-25 mr-3 btn btn-primary">
+          {{ $t("update") }}
+        </button>
+        <button @click="cancelUpdate" class="w-25 btn btn-primary">
+          {{ $t("cancel") }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import firebase from 'firebase'
 export default {
-  name: "NewsPage",
+  name: "EditPage",
+  props: ['pageItem'],
   data() {
     return {
-      news_page: {
-        imageGallery: [],
-        checked: false,
-        newsTitle: "",
-        newsDate: "",
-        newsDescription: "",
-        trailerLink: "",
-        isEditing: false,
-        seo: {
-          url: "",
-          title: "",
-          keywords: "",
-          description: "",
-        },
-      },
     };
   },
   mounted() {},
   methods: {
     addImage() {
-      this.news_page.imageGallery.push({
+      this.pageItem.imageGallery.push({
         imageUrl: "",
       });
     },
-    languageActive() {},
     onPickFile() {
       this.$refs.fileInput.click();
+    },
+    onFileSelected(event) {
+      const files = event.target.files;
+      this.pageItem.picture.selectedFile = files[0].name;
+      if (this.pageItem.picture.selectedFile.indexOf(".") <= 0) {
+        return alert("Please add a valid file");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.pageItem.picture.imageUrl = fileReader.result;
+      });
+      fileReader.readAsDataURL(files[0]);
+      this.pageItem.picture.image = files[0];
+    },
+    removeImage() {
+      this.pageItem.picture.imageUrl = "";
     },
     onGalleryImageSelected(index) {
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.news_page.imageGallery[index].imageUrl = fileReader.result;
+        this.pageItem.imageGallery[index].imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(this.$refs.galleryImageFile[0].files[0]);
     },
     removeGalleryImage(index) {
-      this.news_page.imageGallery.splice(index, 1);
+      this.pageItem.imageGallery.splice(index, 1);
     },
-    savePage() {
-      this.$store.dispatch("addNews", this.news_page);
+    cancelUpdate() {
+      this.$emit("cancelUpdate", false);
+    },
+    async updateCinema() {
+      try {
+        await firebase.database().ref('pages').child(this.pageItem.id).update(this.pageItem)
+        .then(() => {
+          alert('updated')
+        })
+      } catch(err) {
+        console.log(err);
+      }
+      this.$emit("updatedPage", false)
     },
   },
 };
@@ -174,25 +175,6 @@ export default {
   display: flex;
   flex-direction: column;
   position: relative;
-}
-.language {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 30px;
-}
-.language button {
-  cursor: pointer;
-  background: darkgray;
-  padding: 20px 10px 0;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  border: none;
-}
-.language button:hover {
-  background: rgb(136, 136, 136);
-}
-.active {
-  background: rgb(255, 255, 255);
 }
 
 .container {

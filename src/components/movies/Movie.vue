@@ -84,7 +84,6 @@ export default {
       if (confirm("Edit ?")) {
         e.stopPropagation();
         this.isEditFilm = true;
-        console.log(this.movie);
       } else {
         this.isPopupVisible = true;
       }
@@ -111,6 +110,7 @@ export default {
   max-width: 250px;
   transition: all ease 0.5s;
   opacity: 1;
+  box-shadow: 6px 5px 5px 2px;
 }
 .picture img:hover {
   transition: all ease 0.5s;

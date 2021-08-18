@@ -164,47 +164,57 @@ h2 {
   margin: 0 15px 15px 0;
   flex-direction: column;
   border: 1px solid black;
-  border-radius: 10px;
   max-width: 300px;
   width: 100%;
-  max-height: 320px;
+  max-height: 390px;
   height: 100%;
   align-items: center;
   position: relative;
+  background: linear-gradient(30deg, #ffffff, #b5b5b552);
+  box-shadow: 4px 5px 6px 3px;
 }
 .image {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  position: relative;
+    align-items: center;
+    padding: 10px;
+    position: relative;
+    width: 200px;
+    margin: 0 auto;
+}
+.image img {
+  height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
 .image i {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 12px;
+  top: 10px;
   font-size: 26px;
   cursor: pointer;
-  color: black;
+  color: white;
 }
 .image i:hover {
-  color: rgb(124, 124, 124);
+  color: rgb(245, 0, 0);
 }
 .selectImage {
   margin: 0 auto;
 }
 .inputs {
-  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 .inputs label {
   padding-right: 10px;
 }
 .remove-banner {
   position: absolute;
-  right: -10px;
-  top: -10px;
+  right: 2px;
+  top: 2px;
   font-size: 24px;
   cursor: pointer;
+  z-index: 1;
 }
 .remove-banner:hover {
   color: rgb(77, 77, 77);
@@ -220,7 +230,7 @@ h2 {
   border: 1px solid black;
   border-radius: 10px;
   position: relative;
-  box-shadow: 12px 4px 13px 4px rgb(0 0 0 / 50%);
+  background: white;
 }
 .switcher {
   position: absolute;

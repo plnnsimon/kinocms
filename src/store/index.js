@@ -10,6 +10,7 @@ import newsDiscountBanners from './modules/newsDiscountBanners'
 import loading from './modules/loading'
 import news from './modules/news'
 import promotions from './modules/promotions'
+import pages from './modules/pages'
 
 Vue.prototype.$axios = axios;
 
@@ -36,6 +37,7 @@ export default new Vuex.Store({
         cinemas,
         news,
         promotions,
+        pages,
     }
 
 })

@@ -15,6 +15,7 @@
     "cancel": "Відмінити",
     "backToBaseVersion": "Повернути базову версію",
     "soonShawn": "Скоро покажуть",
+    "name": "Назва",
     "sidebar": {
         "statistics": "Статистика",
         "banners": "Банера/Cлайдери",
@@ -27,6 +28,13 @@
         "discounts": "Акції",
         "discountsPage": "Сторінка акції",
         "pages": "Сторінки",
+        "mainPage": "Головна сторінка",
+        "aboutCinema": "Про кінотеатр",
+        "cafeBar": "Кафе - Бар",
+        "vipHall": "Vip - зала",
+        "advertisement": "Реклама",
+        "childRoom": "Дитяча кімната",
+        "contacts": "Контакти",
         "users": "Користувачі",
         "mailing": "Розсилка"
     },
@@ -86,6 +94,13 @@
             "off": "ВЫКЛ"
         }
 
+    },
+    "aboutCinema": {
+        "aboutCinema": "Про кінотеатр"
+    },
+    "pages": {
+        "addPage": "Додати сторінку",
+        "pageList": "Список сторінок"
     }
 
 }

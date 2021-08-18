@@ -3,27 +3,19 @@
     <div class="switcher">
       <p>Статус:</p>
       <label class="switch">
-        <input v-model="news_page.checked" type="checkbox" />
+        <input v-model="advertisement.checked" type="checkbox" />
         <span class="slider round"></span>
       </label>
     </div>
     <div class="container">
       <div class="news-top-section">
         <div class="film-name">
-          <label for="film-name">{{ $t("news.newsName") }}</label>
+          <label for="film-name">{{ $t("name") }}</label>
           <input
-            v-model="news_page.newsTitle"
+            v-model="advertisement.title"
             type="text"
             id="film-name"
-            :placeholder='$t("news.newsName")'
-          />
-        </div>
-        <div class="date-input">
-          <p>{{ $t("news.newsDate") }}</p>
-          <input
-            type="date"
-            v-model="news_page.newsDate"
-            placeholder="8/22/2021"
+            :placeholder='$t("name")'
           />
         </div>
       </div>
@@ -31,7 +23,7 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="news_page.newsDescription"
+          v-model="advertisement.description"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
@@ -42,24 +34,24 @@
         <div class="images">
           <div
             class="gallery-image"
-            v-for="(image, index) in news_page.imageGallery"
+            v-for="(image, index) in advertisement.imageGallery"
             :key="index"
           >
             <i
               class="fas fa-trash-alt"
               @click="removeGalleryImage(index)"
-              v-if="news_page.imageGallery[index].imageUrl"
+              v-if="advertisement.imageGallery[index].imageUrl"
             ></i>
             <input
               :index="index"
-              v-if="!news_page.imageGallery[index].imageUrl"
+              v-if="!advertisement.imageGallery[index].imageUrl"
               type="file"
               @change="onGalleryImageSelected(index)"
               ref="galleryImageFile"
             />
             <img
-              v-if="news_page.imageGallery[index].imageUrl"
-              :src="news_page.imageGallery[index].imageUrl"
+              v-if="advertisement.imageGallery[index].imageUrl"
+              :src="advertisement.imageGallery[index].imageUrl"
             />
           </div>
         </div>
@@ -71,7 +63,7 @@
       <div class="trailer">
         <label for="trailer">{{ $t("trailerLink") }}</label>
         <input
-          v-model="news_page.trailerLink"
+          v-model="advertisement.trailerLink"
           type="text"
           id="trailer"
           :placeholder="$t('mainImage') + ' в youtube'"
@@ -82,28 +74,28 @@
         <form>
           <label for="url">URL: </label>
           <input
-            v-model="news_page.seo.url"
+            v-model="advertisement.seo.url"
             type="text"
             id="url"
             placeholder="URL"
           />
           <label for="title">{{ $t("title") }}: </label>
           <input
-            v-model="news_page.seo.title"
+            v-model="advertisement.seo.title"
             type="text"
             id="title"
             :placeholder="$t('title')"
           />
           <label for="keywords">{{ $t("keywords") }}</label>
           <input
-            v-model="news_page.seo.keywords"
+            v-model="advertisement.seo.keywords"
             type="text"
             id="keywords"
             :placeholder="$t('keywords')"
           />
           <label for="description">{{ $t("description") }}: </label>
           <textarea
-            v-model="news_page.seo.description"
+            v-model="advertisement.seo.description"
             type="text"
             id="description"
             :placeholder="$t('description')"
@@ -122,12 +114,13 @@ export default {
   name: "NewsPage",
   data() {
     return {
-      news_page: {
+      advertisement: {
+        pageName: 'Реклама',
         imageGallery: [],
         checked: false,
-        newsTitle: "",
-        newsDate: "",
-        newsDescription: "",
+        title: "",
+        creationDate: new Date().toLocaleDateString(),
+        description: "",
         trailerLink: "",
         isEditing: false,
         seo: {
@@ -142,26 +135,41 @@ export default {
   mounted() {},
   methods: {
     addImage() {
-      this.news_page.imageGallery.push({
+      this.advertisement.imageGallery.push({
         imageUrl: "",
       });
     },
-    languageActive() {},
     onPickFile() {
       this.$refs.fileInput.click();
+    },
+    onFileSelected(event) {
+      const files = event.target.files;
+      this.advertisement.picture.selectedFile = files[0].name;
+      if (this.advertisement.picture.selectedFile.indexOf(".") <= 0) {
+        return alert("Please add a valid file");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.advertisement.picture.imageUrl = fileReader.result;
+      });
+      fileReader.readAsDataURL(files[0]);
+      this.advertisement.picture.image = files[0];
+    },
+    removeImage() {
+      this.advertisement.picture.imageUrl = "";
     },
     onGalleryImageSelected(index) {
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.news_page.imageGallery[index].imageUrl = fileReader.result;
+        this.advertisement.imageGallery[index].imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(this.$refs.galleryImageFile[0].files[0]);
     },
     removeGalleryImage(index) {
-      this.news_page.imageGallery.splice(index, 1);
+      this.advertisement.imageGallery.splice(index, 1);
     },
     savePage() {
-      this.$store.dispatch("addNews", this.news_page);
+      this.$store.dispatch("addPage", this.advertisement);
     },
   },
 };
@@ -174,25 +182,6 @@ export default {
   display: flex;
   flex-direction: column;
   position: relative;
-}
-.language {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 30px;
-}
-.language button {
-  cursor: pointer;
-  background: darkgray;
-  padding: 20px 10px 0;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  border: none;
-}
-.language button:hover {
-  background: rgb(136, 136, 136);
-}
-.active {
-  background: rgb(255, 255, 255);
 }
 
 .container {

@@ -9,10 +9,17 @@ const routes = [{
         redirect: `/${i18n.locale}`
     },
     {
+        path: '/login',
+        name: 'Login',
+        component: () =>
+            import ( /* webpackChunkName: "about" */ '../components/Login.vue')
+    },
+    {
         path: "/:lang",
         component: {
             render(c) { return c('router-view') }
         },
+
         children: [
 
             {
@@ -94,6 +101,54 @@ const routes = [{
                     import ( /* webpackChunkName: "about" */ '../views/Pages.vue')
             },
             {
+                path: 'main_page',
+                name: 'MainPage',
+                component: () =>
+                    import ( /* webpackChunkName: "about" */ '../components/pages/MainPage')
+            },
+            {
+                path: 'about_cinema',
+                name: 'AboutCinema',
+                component: () =>
+                    import ( /* webpackChunkName: "about" */ '../components/pages/AboutCinema')
+            },
+            {
+                path: 'cafe_bar',
+                name: 'CafeBar',
+                component: () =>
+                    import ( /* webpackChunkName: "about" */ '../components/pages/CafeBar')
+            },
+            {
+                path: 'vip_hall',
+                name: 'VipHall',
+                component: () =>
+                    import ( /* webpackChunkName: "about" */ '../components/pages/VipHall')
+            },
+            {
+                path: 'child_room',
+                name: 'ChildRoom',
+                component: () =>
+                    import ( /* webpackChunkName: "about" */ '../components/pages/ChildRoom')
+            },
+            {
+                path: 'advertisement',
+                name: 'Advertisement',
+                component: () =>
+                    import ( /* webpackChunkName: "about" */ '../components/pages/Advertisement')
+            },
+            {
+                path: 'contacts',
+                name: 'Contacts',
+                component: () =>
+                    import ( /* webpackChunkName: "about" */ '../components/pages/Contacts')
+            },
+            {
+                path: 'add_page',
+                name: 'AddPage',
+                component: () =>
+                    import ( /* webpackChunkName: "about" */ '../components/pages/AddPage')
+            },
+            {
                 path: 'users',
                 name: 'Users',
                 component: () =>
@@ -104,18 +159,20 @@ const routes = [{
                 name: 'Mails',
                 component: () =>
                     import ( /* webpackChunkName: "about" */ '../views/Mails.vue')
+
             },
-            {
-                path: 'login',
-                name: 'Login',
-                component: () =>
-                    import ( /* webpackChunkName: "about" */ '../components/Login.vue')
-            },
+
             {
                 path: 'registration',
                 name: 'Registration',
                 component: () =>
                     import ( /* webpackChunkName: "about" */ '../components/Registration.vue')
+            },
+            {
+                path: 'user_registration',
+                name: 'UserRegistration',
+                component: () =>
+                    import ( /* webpackChunkName: "about" */ '../components/UserRegistration.vue')
             }
         ]
     }

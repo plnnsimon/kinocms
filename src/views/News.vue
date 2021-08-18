@@ -36,7 +36,8 @@
       </table>
       <p v-if="news.length == 0">{{ $t("news.noNews") }}</p>
     </div>
-    <button v-if="!isEditing" @click="addNews" class="btn btn-primary">
+    <button v-if="!isEditing" @click="addNews" style="float: right;
+    margin-right: 20px;" class="btn btn-primary">
       <i class="btn-icon fas fa-plus"></i> {{ $t("news.addNews") }}
     </button>
   </div>

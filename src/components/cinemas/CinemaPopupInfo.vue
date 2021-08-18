@@ -21,9 +21,16 @@
         </div>
       </div>
       <div class="cinemaHalls">
-        <p>{{ $t('cinemas.halls') }}</p>
-        <div :cinemaHall="cinemaHall" v-for="(cinemaHall, index) of cinema.cinemaHalls" :key="index">
-          <img :src="cinemaHall.scheme.imageUrl" alt="scheme">
+        <p>{{ $t("cinemas.halls") }}</p>
+        <div class="cinemaHalls-container">
+          <div
+            :cinemaHall="cinemaHall"
+            v-for="(cinemaHall, index) of cinema.cinemaHalls"
+            :key="index"
+            class="hall"
+          >
+            <img :src="cinemaHall.scheme.imageUrl" alt="scheme" />
+          </div>
         </div>
       </div>
     </div>
@@ -109,6 +116,17 @@ export default {
   height: 100%;
 }
 .cinemaHalls {
-
+  color: white;
+  margin-bottom: 20px;
+}
+.cinemaHalls .hall {
+  margin-right: 15px;
+}
+.cinemaHalls img {
+  max-width: 150px;
+}
+.cinemaHalls-container {
+  display: flex;
+  flex-direction: row;
 }
 </style>

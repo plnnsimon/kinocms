@@ -15,6 +15,7 @@
     "cancel": "Отменить",
     "backToBaseVersion": "Вернуть базовую версию",
     "soonShawn": "Скоро покажут",
+    "name": "Название",
     "sidebar": {
         "statistics": "Статистика",
         "banners": "Баннера/Cлайдеры",
@@ -27,6 +28,13 @@
         "discounts": "Акции",
         "discountsPage": "Страница акции",
         "pages": "Страницы",
+        "mainPage": "Главная страница",
+        "aboutCinema": "О кинотеатре",
+        "cafeBar": "Кафе - Бар",
+        "vipHall": "Vip - зал",
+        "advertisement": "Реклама",
+        "childRoom": "Детская комната",
+        "contacts": "Контакты",
         "users": "Пользователи",
         "mailing": "Рассылка"
     },
@@ -86,5 +94,12 @@
             "off": "ВЫКЛ"
         }
 
+    },
+    "aboutCinema": {
+        "aboutCinema": "О кинотеатре"
+    },
+    "pages": {
+        "addPage": "Добавить страницу",
+        "pageList": "Список страниц"
     }
 }

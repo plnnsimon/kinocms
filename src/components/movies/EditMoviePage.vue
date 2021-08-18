@@ -158,6 +158,9 @@
 export default {
   name: "EditMoviePage",
   props: ["movie"],
+  mounted() {
+    console.log(this.movie);
+  },
   methods: {
     addImage() {
       this.movie.imageGallery.push({
@@ -205,7 +208,7 @@ export default {
       console.log(this.movie);
       this.movie = {
         filmName: "",
-        movieDescription: "",
+        description: "",
         trailerLink: "",
         filmType: {
           twoD: false,

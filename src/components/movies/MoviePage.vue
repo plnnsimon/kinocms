@@ -171,12 +171,8 @@
 <script>
 export default {
   name: "MoviePage",
-  mocks: {
-    $t: () => {},
-  },
   data() {
     return {
-      lang: localStorage.getItem("lang") || "ru",
       movie_page: {
         imageGallery: [],
         filmName: "",
@@ -248,7 +244,7 @@ export default {
       console.log(this.movie_page);
       this.movie_page = {
         filmName: "",
-        movieDescription: "",
+        description: "",
         trailerLink: "",
         filmType: {
           twoD: false,
@@ -279,22 +275,6 @@ export default {
   padding: 20px;
   display: flex;
   flex-direction: column;
-}
-.language {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 30px;
-}
-.language button {
-  cursor: pointer;
-  background: darkgray;
-  padding: 20px 10px 0;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  border: none;
-}
-.language button:hover {
-  background: rgb(136, 136, 136);
 }
 .active {
   background: rgb(255, 255, 255);

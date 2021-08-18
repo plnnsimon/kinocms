@@ -13,6 +13,9 @@
       <span class="brand-text font-weight-light">AdminLTE 3</span>
     </a>
     <div class="sidebar">
+      <div class="admin">
+        {{ admin.email }}
+      </div>
       <nav class="mt-2">
         <ul
           class="nav nav-pills nav-sidebar flex-column"
@@ -119,11 +122,75 @@
               </li>
             </ul>
           </li>
-          <li class="nav-item">
+          <li
+            @mouseenter="pages = true"
+            @mouseleave="pages = false"
+            :class="{ 'menu-is-opening menu-open': pages }"
+            class="nav-item"
+          >
             <router-link :to="{ name: 'Pages' }" class="nav-link">
               <i class="far fa-circle"></i>
-              <p>{{ $t("sidebar.pages") }}</p>
+              <p>
+                {{ $t("sidebar.pages") }}
+                <i class="fas fa-angle-left right"></i>
+              </p>
             </router-link>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link :to="{ name: 'MainPage' }" class="nav-link">
+                  <i class="fas fa-circle"></i>
+                  <p>{{ $t("sidebar.mainPage") }}</p>
+                </router-link>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link :to="{ name: 'AboutCinema' }" class="nav-link">
+                  <i class="fas fa-circle"></i>
+                  <p>{{ $t("sidebar.aboutCinema") }}</p>
+                </router-link>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link :to="{ name: 'CafeBar' }" class="nav-link">
+                  <i class="fas fa-circle"></i>
+                  <p>{{ $t("sidebar.cafeBar") }}</p>
+                </router-link>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link :to="{ name: 'VipHall' }" class="nav-link">
+                  <i class="fas fa-circle"></i>
+                  <p>{{ $t("sidebar.vipHall") }}</p>
+                </router-link>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link :to="{ name: 'Advertisement' }" class="nav-link">
+                  <i class="fas fa-circle"></i>
+                  <p>{{ $t("sidebar.advertisement") }}</p>
+                </router-link>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link :to="{ name: 'ChildRoom' }" class="nav-link">
+                  <i class="fas fa-circle"></i>
+                  <p>{{ $t("sidebar.childRoom") }}</p>
+                </router-link>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link :to="{ name: 'Contacts' }" class="nav-link">
+                  <i class="fas fa-circle"></i>
+                  <p>{{ $t("sidebar.contacts") }}</p>
+                </router-link>
+              </li>
+            </ul>
           </li>
           <li class="nav-item">
             <router-link :to="{ name: 'Users' }" class="nav-link">
@@ -154,12 +221,25 @@ export default {
       cinemas: false,
       news: false,
       promotions: false,
+      pages: false,
     };
+  },
+  mounted() {
+    console.log(this.admin);
+  },
+  computed: {
+    admin() {
+      return this.$store.getters.admin;
+    },
   },
 };
 </script>
 
 <style scoped>
+* ul,
+li {
+  transition: all ease 0.5s;
+}
 .nav-item {
   transition: all ease 0.5s;
 }
@@ -174,5 +254,14 @@ export default {
 }
 .main-sidebar {
   position: fixed !important;
+}
+.admin {
+  width: 100%;
+  border-bottom: 1px solid;
+  margin: 20px 0;
+  text-align: center;
+  color: white;
+  padding-bottom: 10px;
+  text-shadow: 0px 1px 1px white, 1px 2px 2px white;
 }
 </style>

@@ -1,14 +1,24 @@
 <template>
   <div class="banner">
     <div class="banner-item">
-      <i class="far fa-times-circle remove-banner" @click="removeBanner"></i>
-      <div class="image" v-if="banner.imageUrl">
-        <i class="far fa-times-circle" @click="removeImage"></i>
+      <i class="fas fa-window-close remove-banner" @click="removeBanner"></i>
+      <div
+        @mouseover="removeImageIcon = true"
+        @mouseleave="removeImageIcon = false"
+        class="image"
+        v-if="banner.imageUrl"
+      >
+        <i
+          v-if="removeImageIcon"
+          class="fas fa-times"
+          @click="removeImage"
+          :class="{ removeImage: removeImageIcon }"
+        ></i>
         <img :src="banner.imageUrl" height="150" />
       </div>
       <div v-if="!banner.imageUrl" class="selectImage">
         <button class="btn btn-secondary mt-2" @click="onPickFile">
-          {{ $t('banners.chooseImage') }}
+          {{ $t("banners.chooseImage") }}
         </button>
         <input
           type="file"
@@ -17,34 +27,41 @@
           ref="fileInput"
         />
       </div>
-      <div class="inputs">
-        <label for="url">URL:</label>
-        <input
-          type="text"
-          name="url"
-          placeholder="URL"
-          v-model="banner.url"
-        />
-      </div>
-      <div class="inputs">
-        <label for="url">Текст:</label>
-        <input
-          type="text"
-          name="text"
-          placeholder="text"
-          v-model="banner.text"
-        />
+      <div class="inputs-group">
+        <div class="inputs">
+          <label for="url">URL:</label>
+          <input
+            class="form-control"
+            type="text"
+            name="url"
+            placeholder="URL"
+            v-model="banner.url"
+          />
+        </div>
+        <div class="inputs">
+          <label for="url">Текст:</label>
+          <input
+            class="form-control"
+            type="text"
+            name="text"
+            placeholder="text"
+            v-model="banner.text"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
-
 export default {
   name: "MainBanners",
-  props: ["storeBanners", 'banner'],
+  props: ["storeBanners", "banner"],
+  data() {
+    return {
+      removeImageIcon: false,
+    };
+  },
   methods: {
     onPickFile() {
       this.$refs.fileInput.click();
@@ -65,7 +82,7 @@ export default {
       this.banner.imageUrl = null;
     },
     removeBanner() {
-      this.storeBanners.splice(this.storeBanners.indexOf(this.banner), 1)
+      this.storeBanners.splice(this.storeBanners.indexOf(this.banner), 1);
     },
   },
 };

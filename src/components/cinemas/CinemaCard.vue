@@ -186,8 +186,8 @@ export default {
       cinemaCard: {
         cinemasGallery: [],
         cinemaName: "",
-        cinemaDescription: "",
-        cinemaConditions: "",
+        description: "",
+        conditions: "",
         logo: {
           selectedFile: null,
           imageUrl: "",

@@ -2,6 +2,7 @@
   <header
     class="main-header navbar navbar-static-top navbar-expand navbar-dark"
   >
+    
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
@@ -13,6 +14,8 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+      <button @click="addAdmin" class="btn">Add admin</button>
+
       <div class="languages">
         <img v-if="lang == 'ru'" src="../assets/i18n/ru.png" alt="ru" />
         <img v-else src="../assets/i18n/ua.png" alt="ua" />
@@ -47,6 +50,7 @@ export default {
       lang: localStorage.getItem("lang") || "ru",
     };
   },
+  
   methods: {
     onSignOut() {
       this.$store.dispatch("signOut");
@@ -58,6 +62,9 @@ export default {
         params: { lang: event.target.value },
       });
     },
+    addAdmin() {
+      this.$router.replace({ name: 'Registration' })
+    }
   },
 };
 </script>

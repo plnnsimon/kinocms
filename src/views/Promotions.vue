@@ -36,7 +36,8 @@
       </table>
       <p v-if=" promotions == undefined || promotions.length == 0">{{ $t("promotions.noPromotions") }}</p>
     </div>
-    <button v-if="!isEditing" @click="addNews" class="btn btn-primary">
+    <button v-if="!isEditing" @click="addNews" class="btn btn-primary" style="float: right;
+    margin-right: 20px;">
       <i class="btn-icon fas fa-plus"></i> {{ $t("promotions.addPromotions") }}
     </button>
   </div>

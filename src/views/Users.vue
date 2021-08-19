@@ -1,6 +1,10 @@
 <template>
-  <div>
+  <div class="users">
     <Spinner v-if="loading" />
+    <div class="userEditing">
+
+    <EditUsers @closeEditingMenu="closeEditingMenu" v-if="isEditingUser" :user="user" />
+    </div>
     <div class="table">
       <table id="table" v-if="!loading">
         <thead>
@@ -41,35 +45,11 @@
       </table>
       <p v-if="users.length == 0">Пользователей нету</p>
     </div>
-    <div class="editingUser-container" v-if="isEditingUser">
-      <div class="editingUser">
-        <div>
-          <label for="name">Имя</label>
-          <input type="text" id="name" v-model="editingUser.name" />
-        </div>
-        <div>
-          <label for="surname">Фамилия</label>
-          <input type="text" id="surname" v-model="editingUser.surname" />
-        </div>
-        <div>
-          <label for="phoneNumber">Телефон</label>
-          <input
-            type="text"
-            id="phoneNumber"
-            v-model="editingUser.phoneNumber"
-          />
-        </div>
-        <div>
-          <label for="nickname">Псевдоним</label>
-          <input type="text" id="nickname" v-model="editingUser.nickname" />
-        </div>
-      </div>
-      <button @click="updateUser" class="btn btn-primary">{{ $t("update") }}</button>
-    </div>
   </div>
 </template>
 
 <script>
+import EditUsers from "../components/users/EditUsers"
 import Spinner from "../components/Spinner";
 import $ from "jquery";
 
@@ -77,11 +57,13 @@ export default {
   name: "Users",
   components: {
     Spinner,
+    EditUsers
   },
   data() {
     return {
       isEditingUser: false,
       editingUser: null,
+      user: null
     };
   },
   computed: {
@@ -97,6 +79,11 @@ export default {
     setTimeout(() => this.getTable(), 1000);
   },
   methods: {
+    async closeEditingMenu(data) {
+      this.isEditingUser = data
+      this.$store.dispatch("loadUsers");
+      // setTimeout(() => this.getTable(), 1000);
+    },
     getTable() {
       $(document).ready(function () {
         $("#table").DataTable({
@@ -122,14 +109,9 @@ export default {
     },
     editUser(user) {
       this.isEditingUser = true;
-      this.editingUser = user;
+      this.user = user;
+      console.log(user);
     },
-    async updateUser() {
-      this.$store.dispatch("updateUser", this.editingUser)
-      this.$store.dispatch("loadUsers");
-      this.isEditingUser = false;
-      await this.getTable()
-    }
   },
 };
 </script>
@@ -161,5 +143,16 @@ table i:hover {
 }
 .editingUser-container button {
   margin: auto;
+}
+.users {
+  position: relative;
+}
+.userEditing {
+  position: absolute;
+    z-index: 9;
+    background: white;
+    width: 100%;
+    top: -30px;
+    padding: 0 30px;
 }
 </style>

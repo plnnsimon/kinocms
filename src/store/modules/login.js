@@ -79,7 +79,6 @@ export default {
             firebase.auth().onAuthStateChanged((user) => {
                 if (user) {
                     // Admin is signed in.
-                    console.log(user);
                     commit('setAdmin', user)
                     console.log("signed in");
                     commit('setIsLoggedIn', true)
@@ -106,7 +105,7 @@ export default {
                 .then(() => {
                     commit('setUsers', payload)
                     commit('setLoading', false)
-                    alert("saved successfully")
+                        // alert("saved successfully")
                 })
                 .catch((err) => console.log(err))
             console.log("saved");

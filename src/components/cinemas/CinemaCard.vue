@@ -1,10 +1,21 @@
 <template>
   <div class="movie-picture-page">
+    <div class="saveCinema" v-if="saveCinema">
+      Saving cinema ...
+    </div>
     <div class="container">
       <div class="film-name">
         <label for="film-name">{{ $t("cinemas.cinemasName") }}</label>
         <input
-          v-model="cinemaCard.cinemaName"
+        v-if="lang == 'ua'"
+          v-model="cinemaCard.uaCinemaName"
+          type="text"
+          id="cinema-name"
+          :placeholder="$t('cinemas.cinemasName')"
+        />
+        <input
+        v-else
+          v-model="cinemaCard.ruCinemaName"
           type="text"
           id="cinema-name"
           :placeholder="$t('cinemas.cinemasName')"
@@ -13,7 +24,15 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="cinemaCard.cinemaDescription"
+        v-if="lang == 'ru'"
+          v-model="cinemaCard.ruDescription"
+          type="text"
+          id="cinema-description"
+          :placeholder="$t('description')"
+        ></textarea>
+        <textarea
+        v-else
+          v-model="cinemaCard.uaDescription"
           type="text"
           id="cinema-description"
           :placeholder="$t('description')"
@@ -22,7 +41,15 @@
       <div class="description">
         <label for="film-description">{{ $t("cinemas.conditions") }}</label>
         <textarea
-          v-model="cinemaCard.cinemaConditions"
+        v-if="lang == 'ru'"
+          v-model="cinemaCard.ruConditions"
+          type="text"
+          id="cinema-conditions"
+          :placeholder="$t('cinemas.conditions')"
+        ></textarea>
+        <textarea
+        v-else
+          v-model="cinemaCard.uaConditions"
           type="text"
           id="cinema-conditions"
           :placeholder="$t('cinemas.conditions')"
@@ -185,9 +212,12 @@ export default {
     return {
       cinemaCard: {
         cinemasGallery: [],
-        cinemaName: "",
-        description: "",
-        conditions: "",
+        ruCinemaName: "",
+        uaCinemaName: "",
+        ruDescription: "",
+        uaDescription: "",
+        ruConditions: "",
+        uaConditions: "",
         logo: {
           selectedFile: null,
           imageUrl: "",
@@ -211,7 +241,14 @@ export default {
       isHallEditing: false,
     };
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    },
+    saveCinema() {
+      return this.$store.getters.saveCinema
+    }
+  },
   methods: {
     saveHall(cinemaHall) {
       this.cinemaCard.cinemaHalls.push(cinemaHall);
@@ -300,6 +337,19 @@ export default {
 </script>
 
 <style scoped>
+.saveCinema {
+  position: fixed;
+    font-size: 36px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    padding-top: 55%;
+    padding-left: 65%;
+    background: rgb(163 164 165 / 63%);
+    z-index: 11;
+}
 .cinemaHall {
   background: white;
   z-index: 1;

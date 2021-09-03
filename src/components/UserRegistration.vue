@@ -1,10 +1,11 @@
 <template>
-  <div class="d-flex justify-content-center pt-5">
-    <div class="registration">
+<div style="width: 100%; height: 100%;" @click="closeRegistration">
+
+    <div @click.stop class="registration">
       <form @submit.prevent="handleSubmit">
         <div>
           <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
+            <label for="name" class="form-label">Name*</label>
             <input
               type="name"
               class="form-control"
@@ -15,7 +16,7 @@
             />
           </div>
           <div class="mb-3">
-            <label for="surname" class="form-label">Surname</label>
+            <label for="surname" class="form-label">Surname*</label>
             <input
               type="surname"
               class="form-control"
@@ -137,7 +138,7 @@
             />
           </div>
           <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
+            <label for="email" class="form-label">Email address*</label>
             <input
               type="email"
               class="form-control"
@@ -148,7 +149,7 @@
             />
           </div>
           <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
+            <label for="password" class="form-label">Password*</label>
             <input
               type="password"
               class="form-control"
@@ -157,18 +158,21 @@
               v-model="user.password"
               required
             />
+            <p style="color: red;" v-if="errMessage">Password must be longer</p>
           </div>
           <div class="mb-3">
             <label for="confirmPassword" class="form-label"
-              >Confirm Password</label
+              >Confirm Password*</label
             >
             <input
+            @blur="validate"
               type="password"
               class="form-control"
               id="confirmPassword"
               v-model="user.confirmPassword"
               required
             />
+            <p style="color: red;" v-if="errMessage">Please confirm the password</p>
           </div>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
@@ -209,24 +213,45 @@ export default {
         receivedMessages: '',
         receivedEmails: '',
       },
+      errMessage: false
     };
   },
   methods: {
     validate() {
       if (this.user.password.length < 6) {
-        alert('password must be longer')
+        this.errMessage = true
       }
+      if (this.user.confirmPassword && this.user.confirmPassword != this.user.password) {
+        this.errMessage = true
+      } else {
+        this.errMessage = false
+      }
+    },
+    closeRegistration() {
+      this.$emit("closeRegistration", false)
     },
     handleSubmit() {
       try {
-        const user = firebase
+        firebase
           .auth()
           .createUserWithEmailAndPassword(this.user.email, this.user.password)
+          .then((data) => {
+            firebase.database().ref("users").push({
+              userId: data.user.uid,
+              ...this.user
+            });
+            this.$router.replace('/').catch(err => err);
+            this.$emit("closeRegistration", false)
+            this.$store.commit('setRegistrationMessage', true)
+            setTimeout(() => {
+                        this.$store.commit('setRegistrationMessage', false)
+                    }, 6000)
+          })
           .then(() => {
-            firebase.database().ref("users").push(this.user);
-            this.$router.replace({ name: "Stats" });
+            firebase.auth().currentUser.updateProfile({
+              displayName: this.user.nickname,
+            })
           });
-        console.log(user);
       } catch (err) {
         console.log(err);
       }
@@ -237,12 +262,18 @@ export default {
 
 <style scoped>
 .registration {
-  border: 1px solid rgb(109, 109, 109);
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  box-shadow: 20px 19px 20px 15px rgb(0 0 0 / 21%);
-  width: 100%;
+  color: black;
+    border: 1px solid rgb(109, 109, 109);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    box-shadow: 20px 19px 20px 15px rgb(0 0 0 / 21%);
+    width: 60%;
+    position: absolute;
+    left: 20%;
+    background: #bfbfbf;
+    z-index: 20;
+    top: 10%;
 }
 form {
   display: flex;

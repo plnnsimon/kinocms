@@ -1,11 +1,26 @@
 <template>
   <div class="news-page">
-    <div v-for="(cinema, index) of cinemas" :key="index" class="cinemas">
+    <div class="switcher">
+      <p>Статус:</p>
+      <label class="switch">
+        <input v-model="contacts.checked" type="checkbox" />
+        <span class="slider round"></span>
+      </label>
+    </div>
+    <div v-for="(cinema, index) of contacts.cinemas" :key="index" class="cinemas">
       <div class="cinema">
         <div class="top">
           <label for="name">Название кинотеатра</label>
           <input
-            v-model="cinema.name"
+          v-if="lang == 'ru'"
+            v-model="cinema.ruName"
+            id="name"
+            type="text"
+            placeholder="Название кинотеатра"
+          />
+          <input
+          v-else
+            v-model="cinema.uaName"
             id="name"
             type="text"
             placeholder="Название кинотеатра"
@@ -14,7 +29,15 @@
         <div class="address">
           <label for="address">Адресс</label>
           <textarea
-            v-model="cinema.address"
+          v-if="lang == 'ru'"
+            v-model="cinema.ruAddress"
+            id="address"
+            type="text"
+            placeholder="Магазин 'Декор' 4,5 (38) · Магазин вулиця Калініна, 63"
+          ></textarea>
+          <textarea
+          v-else
+            v-model="cinema.uaAddress"
             id="address"
             type="text"
             placeholder="Магазин 'Декор' 4,5 (38) · Магазин вулиця Калініна, 63"
@@ -56,24 +79,24 @@
         <p>SEO блок:</p>
         <form>
           <label for="url">URL: </label>
-          <input v-model="seo.url" type="text" id="url" placeholder="URL" />
+          <input v-model="contacts.seo.url" type="text" id="url" placeholder="URL" />
           <label for="title">{{ $t("title") }}: </label>
           <input
-            v-model="seo.title"
+            v-model="contacts.seo.title"
             type="text"
             id="title"
             :placeholder="$t('title')"
           />
           <label for="keywords">{{ $t("keywords") }}</label>
           <input
-            v-model="seo.keywords"
+            v-model="contacts.seo.keywords"
             type="text"
             id="keywords"
             :placeholder="$t('keywords')"
           />
           <label for="description">{{ $t("description") }}: </label>
           <textarea
-            v-model="seo.description"
+            v-model="contacts.seo.description"
             type="text"
             id="description"
             :placeholder="$t('description')"
@@ -90,67 +113,66 @@
 </template>
 
 <script>
-import firebase from "firebase";
 export default {
   name: "NewsPage",
   data() {
     return {
-      cinemas: [],
-      seo: {
-        url: "",
-        title: "",
-        keywords: "",
-        description: "",
+      contacts: {
+        checked: false,
+        ruPageName: "Контакты",
+        uaPageName: "Контакти",
+        creationDate: new Date().toLocaleDateString(),
+        title: '',
+        cinemas: [],
+        seo: {
+          url: "",
+          title: "",
+          keywords: "",
+          description: "",
+        },
+        index: null,
       },
-      index: null
     };
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    }
+  },
   methods: {
     onPickLogoFile(index) {
-      this.index = index
+      this.index = index;
       this.$refs.logoFileInputs[index].click();
     },
     onLogoSelected(event) {
-      
       const files = event.target.files;
-      this.cinemas[this.index].logo.selectedFile = files[0].name;
-      if (this.cinemas[this.index].logo.selectedFile.indexOf(".") <= 0) {
+      this.contacts.cinemas[this.index].logo.selectedFile = files[0].name;
+      if (this.contacts.cinemas[this.index].logo.selectedFile.indexOf(".") <= 0) {
         return alert("Please add a valid file");
       }
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.cinemas[this.index].logo.imageUrl = fileReader.result;
+        this.contacts.cinemas[this.index].logo.imageUrl = fileReader.result;
       });
       fileReader.readAsDataURL(files[0]);
-      this.cinemas[this.index].logo.image = files[0];
+      this.contacts.cinemas[this.index].logo.image = files[0];
     },
     removeLogoImage(cinema) {
       cinema.logo.imageUrl = "";
     },
     async savePage() {
-      try {
-        await firebase
-          .database()
-          .ref("pages")
-          .push(this.cinemas)
-          .then(() => {
-            alert("saved successfully");
-            this.$router.push('pages')
-          });
-      } catch (err) {
-        console.log(err);
-      }
+      this.$store.dispatch("addPage", this.contacts);
     },
     addCinema() {
-      this.cinemas.push({
+      this.contacts.cinemas.push({
         logo: {
           selectedFile: null,
           imageUrl: "",
           image: null,
         },
         name: "",
-        address: "",
+        ruAddress: "",
+        uaAddress: "",
         coords: "",
       });
     },

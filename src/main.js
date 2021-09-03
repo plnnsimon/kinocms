@@ -15,7 +15,17 @@ import i18n from './i18n'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'datatables.net-bs5'
 import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css'
+import Paginate from 'vuejs-paginate'
+import * as VueGoogleMaps from 'vue2-google-maps'
 
+Vue.use(VueGoogleMaps, {
+    load: {
+        key: 'AIzaSyDemLARe27rnIBPDzoyhnCB2vt624tB-ns'
+    },
+    installComponents: false
+})
+Vue.component('GmapMap', VueGoogleMaps.Map)
+Vue.component('Paginate', Paginate)
 
 const lang = localStorage.getItem('lang') || 'ru';
 axios.defaults.headers['Accept-Language'] = lang

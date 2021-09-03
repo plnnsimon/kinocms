@@ -172,8 +172,8 @@
           </div>
         </div>
         <button type="submit" class="btn btn-primary">{{ $t('update') }}</button>
-      </form>
         <button type="submit" class="btn btn-primary" @click="closeEditingMenu">{{ $t('cancel') }}</button>
+      </form>
     </div>
   </div>
 </template>

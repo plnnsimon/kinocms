@@ -26,13 +26,7 @@ export default {
                     for (let key in obj) {
                         movies.push({
                             filmId: key,
-                            imageUrl: obj[key].picture.imageUrl,
-                            soonShawn: obj[key].soonShawn || false,
-                            filmName: obj[key].filmName,
-                            description: obj[key].description,
-                            filmType: obj[key].filmType,
-                            imageGallery: obj[key].imageGallery || [],
-                            seo: obj[key].seo
+                            ...obj[key]
                         })
                     }
                     commit('setMovies', movies)
@@ -51,7 +45,7 @@ export default {
                     commit('setMovies', payload)
                     commit('setLoading', false)
                     alert("saved successfully")
-                    router.push('movies');
+                    router.push({ name: 'Movies' });
                 })
                 .catch((err) => console.log(err))
             console.log("saved");

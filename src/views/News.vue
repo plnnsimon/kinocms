@@ -18,7 +18,8 @@
           <td>Статус</td>
         </tr>
         <tr v-for="(item, index) of news" :key="index">
-          <td>{{ item.newsTitle }}</td>
+          <td v-if="lang == 'ru'">{{ item.ruNewsTitle }}</td>
+          <td v-else>{{ item.uaNewsTitle }}</td>
           <td>{{ item.newsDate }}</td>
           <td v-if="item.checked">ВКЛ</td>
           <td v-else>{{ $t("news.table.off") }}</td>
@@ -60,6 +61,9 @@ export default {
     };
   },
   computed: {
+    lang() {
+      return this.$i18n.locale
+    },
     news() {
       return this.$store.getters.news;
     },

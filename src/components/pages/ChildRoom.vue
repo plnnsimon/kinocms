@@ -12,7 +12,15 @@
         <div class="film-name">
           <label for="film-name">{{ $t("name") }}</label>
           <input
-            v-model="childRoom.title"
+          v-if="lang == 'ru'"
+            v-model="childRoom.ruTitle"
+            type="text"
+            id="film-name"
+            :placeholder='$t("name")'
+          />
+          <input
+          v-else
+            v-model="childRoom.uaTitle"
             type="text"
             id="film-name"
             :placeholder='$t("name")'
@@ -23,11 +31,35 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="childRoom.description"
+        v-if="lang == 'ru'"
+          v-model="childRoom.ruDescription"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
         ></textarea>
+        <textarea
+        v-else
+          v-model="childRoom.uaDescription"
+          type="text"
+          id="film-description"
+          :placeholder="$t('description')"
+        ></textarea>
+      </div>
+      <div class="main-picture">
+        <p>{{ $t("mainImage") }}</p>
+        <img :src="childRoom.picture.imageUrl" alt="picture" />
+        <input
+          type="file"
+          style="display: none"
+          ref="fileInput"
+          @change="onFileSelected"
+        />
+        <button @click="onPickFile" class="btn btn-primary">
+          {{ $t("add") }}
+        </button>
+        <button @click="removeImage" class="btn btn-danger">
+          {{ $t("delete") }}
+        </button>
       </div>
       <div class="picture-gallery">
         <p>{{ $t("imageGallery") }}</p>
@@ -106,12 +138,20 @@ export default {
   data() {
     return {
       childRoom: {
-        pageName: 'Десткая комната',
+        ruPageName: 'Десткая комната',
+        uaPageName: 'Дитяча кімната',
         imageGallery: [],
         checked: false,
-        title: "",
+        picture: {
+          selectedFile: null,
+          imageUrl: "",
+          image: null,
+        },
+        ruTitle: "",
+        uaTitle: "",
         creationDate: new Date().toLocaleDateString(),
-        description: "",
+        ruDescription: "",
+        uaDescription: "",
         trailerLink: "",
         isEditing: false,
         seo: {
@@ -123,7 +163,11 @@ export default {
       },
     };
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    }
+  },
   methods: {
     addImage() {
       this.childRoom.imageGallery.push({
@@ -209,6 +253,9 @@ label {
   justify-content: space-between;
   padding: 10px;
   box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
+}
+.main-picture img {
+  max-width: 400px;
 }
 .main-picture button {
   height: 40px;

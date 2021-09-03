@@ -27,7 +27,15 @@
       <div class="description">
         <label for="film-description">SEO текст:</label>
         <textarea
-          v-model="pageItem.seoText"
+        v-if="lang == 'ru'"
+          v-model="pageItem.ruSeoText"
+          type="text"
+          id="film-description"
+          placeholder="текст"
+        ></textarea>
+        <textarea
+        v-else
+          v-model="pageItem.uaSeoText"
           type="text"
           id="film-description"
           placeholder="текст"
@@ -87,7 +95,11 @@ export default {
     return {
     };
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    }
+  },
   methods: {
     savePage() {
       this.$store.dispatch("addPage", this.pageItem);

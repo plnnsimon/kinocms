@@ -13,7 +13,7 @@
       <span class="brand-text font-weight-light">AdminLTE 3</span>
     </a>
     <div class="sidebar">
-      <div class="admin">
+      <div v-if="admin" class="admin">
         {{ admin.email }}
       </div>
       <nav class="mt-2">
@@ -33,6 +33,12 @@
             <router-link :to="{ name: 'Banners' }" class="nav-link">
               <i class="far fa-circle"></i>
               <p>{{ $t("sidebar.banners") }}</p>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link :to="{ name: 'timetable' }" class="nav-link">
+              <i class="far fa-circle"></i>
+              <p>{{ $t("sidebar.timetable") }}</p>
             </router-link>
           </li>
           <li

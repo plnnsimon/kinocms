@@ -25,8 +25,10 @@ export default {
                     for (let key in obj) {
                         news.push({
                             newsId: key,
-                            newsTitle: obj[key].newsTitle,
-                            description: obj[key].newsDescription,
+                            ruNewsTitle: obj[key].ruNewsTitle,
+                            uaNewsTitle: obj[key].uaNewsTitle,
+                            ruDescription: obj[key].ruNewsDescription,
+                            uaDescription: obj[key].uaNewsDescription,
                             imageGallery: obj[key].imageGallery,
                             checked: obj[key].checked,
                             newsDate: obj[key].newsDate,
@@ -61,7 +63,7 @@ export default {
                     commit('setNews', payload)
                     commit('setLoading', false)
                     alert("saved successfully")
-                    router.push('news');
+                    router.push({ name: 'News' });
                 })
                 .catch((err) => console.log(err))
             console.log("saved");

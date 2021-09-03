@@ -12,7 +12,15 @@
         <div class="film-name">
           <label for="film-name">{{ $t("news.newsName") }}</label>
           <input
-            v-model="promotionsItem.promotionsTitle"
+          v-if="lang == 'ru'"
+            v-model="promotionsItem.ruPromotionsTitle"
+            type="text"
+            id="film-name"
+            placeholder="Название новости"
+          />
+          <input
+          v-else
+            v-model="promotionsItem.uaPromotionsTitle"
             type="text"
             id="film-name"
             placeholder="Название новости"
@@ -31,7 +39,15 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="promotionsItem.description"
+        v-if="lang == 'ru'"
+          v-model="promotionsItem.ruDescription"
+          type="text"
+          id="film-description"
+          :placeholder="$t('description')"
+        ></textarea>
+        <textarea
+        v-else
+          v-model="promotionsItem.uaDescription"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
@@ -129,7 +145,11 @@ export default {
     return {};
   },
   props: ["promotionsItem"],
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale;
+    },
+  },
   methods: {
     addImage() {
       this.promotionsItem.imageGallery.push({
@@ -152,7 +172,7 @@ export default {
     },
     updateNews() {
       this.$store.dispatch("updatePromotions", this.promotionsItem);
-      this.$store.dispatch('loadPromotions')
+      this.$store.dispatch("loadPromotions");
       this.$emit("updatedNews", false);
     },
     cancelUpdate() {

@@ -1,36 +1,43 @@
 <template>
   <div class="banners">
-    <h2>{{ $t('banners.mainBanners') }}</h2>
+    <h2>{{ $t("banners.mainBanners") }}</h2>
     <div class="banners-section">
+      <div class="savingBanners" v-if="savingBanners">Saving banners ...</div>
       <div style="marginbottom: 20px; padding: 55px 10px 10px">
-        <div class="banners-container">
+        <div>
           <div class="loading">
             <Spinner v-if="loading" />
           </div>
+        <div v-if="!loading" class="banners-container">
 
           <MainBanners
+            
             :storeBanners="storeBanners"
             :banner="banner"
             v-for="(banner, index) of storeBanners"
             :key="index"
           />
-
+        </div>
           <div v-if="storeBanners.length == 0">
-            <p>{{ $t('banners.noBannersYet') }}</p>
+            <p>{{ $t("banners.noBannersYet") }}</p>
           </div>
         </div>
-        <button @click="onAdd" class="btn btn-dark">{{ $t('banners.addBanner') }}</button>
+        <button @click="onAdd" class="btn btn-dark">
+          {{ $t("banners.addBanner") }}
+        </button>
       </div>
       <div class="speed">
-        <p>{{ $t('banners.speed') }}</p>
-        <select name="" id="">
+        <p>{{ $t("banners.speed") }}</p>
+        <select v-model="speed" name="" id="">
           <option value="5" selected>5s</option>
           <option value="10">10s</option>
           <option value="15">15s</option>
           <option value="20">20s</option>
         </select>
       </div>
-      <button @click="onSave" class="btn btn-dark">{{ $t('save') }}</button>
+      <button @click="onSave" class="btn btn-dark" style="position: relative">
+        {{ $t("save") }}
+      </button>
       <div class="switcher">
         <label class="switch">
           <input type="checkbox" />
@@ -38,12 +45,13 @@
         </label>
       </div>
     </div>
-    <h2>{{ $t('banners.throughBanner') }}</h2>
+    <h2>{{ $t("banners.throughBanner") }}</h2>
     <div class="banners-section">
       <ThroughBanner />
     </div>
-    <h2>{{ $t('banners.newsDiscountBanners') }}</h2>
+    <h2>{{ $t("banners.newsDiscountBanners") }}</h2>
     <div class="banners-section">
+      <div class="savingBanners" v-if="savingBanners">Saving banners ...</div>
       <div
         class="banners-container"
         style="marginbottom: 20px; padding: 50px 10px 10px"
@@ -58,15 +66,15 @@
           :key="index"
         />
         <div v-if="storeNDBanners.length == 0">
-          <p>{{ $t('banners.noBannersYet') }}</p>
+          <p>{{ $t("banners.noBannersYet") }}</p>
         </div>
       </div>
       <button @click="onAdd2" class="btn btn-dark" style="margin-left: 10px">
-        {{ $t('banners.addBanner') }}
+        {{ $t("banners.addBanner") }}
       </button>
 
       <div class="speed">
-        <p>{{ $t('banners.speed') }}</p>
+        <p>{{ $t("banners.speed") }}</p>
         <select name="" id="">
           <option value="5" selected>5s</option>
           <option value="10">10s</option>
@@ -74,7 +82,7 @@
           <option value="20">20s</option>
         </select>
       </div>
-      <button @click="onSave2" class="btn btn-dark">{{ $t('save') }}</button>
+      <button @click="onSave2" class="btn btn-dark">{{ $t("save") }}</button>
       <div class="switcher">
         <label class="switch">
           <input type="checkbox" />
@@ -91,6 +99,7 @@ import ThroughBanner from "../components/banners/ThroughBanner";
 import NewsDiscountBanners from "../components/banners/NewsDiscountBanners";
 import Spinner from "../components/Spinner.vue";
 import "firebase/storage";
+import firebase from 'firebase'
 
 export default {
   name: "Banners",
@@ -99,6 +108,11 @@ export default {
     ThroughBanner,
     NewsDiscountBanners,
     Spinner,
+  },
+  data() {
+    return {
+      speed: ''
+    }
   },
   computed: {
     storeBanners() {
@@ -110,32 +124,45 @@ export default {
     loading() {
       return this.$store.getters.loading;
     },
+    savingBanners() {
+      return this.$store.getters.savingBanners;
+    },
   },
-  mounted() {
+  async mounted() {
     this.$store.dispatch("loadBanners");
     this.$store.dispatch("loadNDBanners");
+    await firebase.database().ref('speed').once('value').then((data) => {
+      this.speed = data.val()
+    })
   },
   methods: {
     onAdd() {
       const banner = {
-        selectedFile: null,
-        imageUrl: "",
+        ruSelectedFile: null,
+        uaSelectedFile: null,
+        ruImageUrl: "",
+        uaImageUrl: "",
         url: "",
-        text: "",
+        text: ""
       };
       this.$store.dispatch("addBanner", banner);
-      console.log(this.$store.getters.storeBanners);
     },
     onSave() {
       const banners = this.$store.getters.storeBanners;
-      this.$store.dispatch("onBannersSave", banners );
+      this.$store.dispatch("onBannersSave", banners);
+      firebase.database().ref('speed').set(this.speed)
+                .then(() => {
+                    console.log("saved");
+                })
+                .catch((err) => console.log(err))
     },
 
     onAdd2() {
       const banner = {
-        selectedFile: null,
-        imageUrl: "",
-        image: null,
+        ruSelectedFile: null,
+        uaSelectedFile: null,
+        ruImageUrl: "",
+        uaImageUrl: "",
         url: "",
       };
       this.$store.dispatch("addNDBanner", banner);
@@ -151,6 +178,19 @@ export default {
 </script>
 
 <style>
+.savingBanners {
+  position: absolute;
+    z-index: 100;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 30%;
+    background: #ffffffa1;
+    border-radius: 10px;
+    font-size: 56px;
+    font-weight: bold;
+}
 h2 {
   margin: 10px auto;
 }
@@ -175,16 +215,16 @@ h2 {
 }
 .image {
   display: flex;
-    align-items: center;
-    padding: 10px;
-    position: relative;
-    width: 200px;
-    margin: 0 auto;
+  align-items: center;
+  padding: 10px;
+  position: relative;
+  width: 200px;
+  margin: 0 auto;
 }
 .image img {
   height: 100%;
-    width: 100%;
-    object-fit: cover;
+  width: 100%;
+  object-fit: cover;
 }
 .image i {
   position: absolute;
@@ -327,6 +367,6 @@ input:checked + .slider:before {
   padding-top: 50px;
 }
 .banners h2:nth-child(1) {
-padding-top: 0;
+  padding-top: 0;
 }
 </style>

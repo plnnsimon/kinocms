@@ -12,7 +12,14 @@
         <div class="film-name">
           <label for="film-name">{{ $t("name") }}</label>
           <input
-            v-model="cafeBar.title"
+          v-if="lang == 'ru'"
+            v-model="cafeBar.ruTitle"
+            type="text"
+            placeholder="Кафе Бар"
+          />
+          <input
+          v-else
+            v-model="cafeBar.uaTitle"
             type="text"
             placeholder="Кафе Бар"
           />
@@ -22,7 +29,15 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="cafeBar.description"
+        v-if="lang == 'ru'"
+          v-model="cafeBar.ruDescription"
+          type="text"
+          id="film-description"
+          :placeholder="$t('description')"
+        ></textarea>
+        <textarea
+        v-else
+          v-model="cafeBar.uaDescription"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
@@ -122,12 +137,15 @@ export default {
   data() {
     return {
       cafeBar: {
-        pageName: "Кафе Бар",
+        ruPageName: "Кафе Бар",
+        uaPageName: "Кафе Бар",
         creationDate: new Date().toLocaleDateString(),
         imageGallery: [],
         checked: false,
-        title: "",
-        description: "",
+        ruTitle: "",
+        uaTitle: "",
+        ruDescription: "",
+        uaDescription: "",
         picture: {
           selectedFile: null,
           imageUrl: "",
@@ -142,8 +160,10 @@ export default {
       },
     };
   },
-  mounted() {
-    
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    }
   },
   methods: {
     

@@ -12,7 +12,15 @@
         <div class="film-name">
           <label for="film-name">{{ $t("name") }}</label>
           <input
-            v-model="advertisement.title"
+          v-if="lang == 'ru'"
+            v-model="advertisement.ruTitle"
+            type="text"
+            id="film-name"
+            :placeholder='$t("name")'
+          />
+          <input
+          v-else
+            v-model="advertisement.uaTitle"
             type="text"
             id="film-name"
             :placeholder='$t("name")'
@@ -23,11 +31,35 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="advertisement.description"
+        v-if="lang == 'ru'"
+          v-model="advertisement.ruDescription"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
         ></textarea>
+        <textarea
+        v-else
+          v-model="advertisement.uaDescription"
+          type="text"
+          id="film-description"
+          :placeholder="$t('description')"
+        ></textarea>
+      </div>
+      <div class="main-picture">
+        <p>{{ $t("mainImage") }}</p>
+        <img :src="advertisement.picture.imageUrl" alt="picture" />
+        <input
+          type="file"
+          style="display: none"
+          ref="fileInput"
+          @change="onFileSelected"
+        />
+        <button @click="onPickFile" class="btn btn-primary">
+          {{ $t("add") }}
+        </button>
+        <button @click="removeImage" class="btn btn-danger">
+          {{ $t("delete") }}
+        </button>
       </div>
       <div class="picture-gallery">
         <p>{{ $t("imageGallery") }}</p>
@@ -60,15 +92,7 @@
           {{ $t("add") }}
         </button>
       </div>
-      <div class="trailer">
-        <label for="trailer">{{ $t("trailerLink") }}</label>
-        <input
-          v-model="advertisement.trailerLink"
-          type="text"
-          id="trailer"
-          :placeholder="$t('mainImage') + ' в youtube'"
-        />
-      </div>
+      
       <div class="seo">
         <p>SEO блок:</p>
         <form>
@@ -115,14 +139,21 @@ export default {
   data() {
     return {
       advertisement: {
-        pageName: 'Реклама',
+        ruPageName: 'Реклама',
+        uaPageName: 'Реклама',
         imageGallery: [],
         checked: false,
-        title: "",
+        ruTitle: "",
+        uaTitle: "",
         creationDate: new Date().toLocaleDateString(),
-        description: "",
-        trailerLink: "",
+        ruDescription: "",
+        uaDescription: "",
         isEditing: false,
+        picture: {
+          selectedFile: null,
+          imageUrl: "",
+          image: null,
+        },
         seo: {
           url: "",
           title: "",
@@ -132,7 +163,11 @@ export default {
       },
     };
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    }
+  },
   methods: {
     addImage() {
       this.advertisement.imageGallery.push({
@@ -218,6 +253,9 @@ label {
   justify-content: space-between;
   padding: 10px;
   box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
+}
+.main-picture img {
+  max-width: 400px;
 }
 .main-picture button {
   height: 40px;

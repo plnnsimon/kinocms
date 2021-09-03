@@ -1,4 +1,7 @@
 {
+    "buy": "Придбати",
+    "newsAndAdvertisement": "Новини та Акції",
+    "watchToday": "Дивіться сьогодні",
     "filmName": "Назва фільму",
     "description": "Опис",
     "mainImage": "Головна картинка",
@@ -16,7 +19,10 @@
     "backToBaseVersion": "Повернути базову версію",
     "soonShawn": "Скоро покажуть",
     "name": "Назва",
+    "timetable": "Розклад",
+    "poster": "Афіша",
     "sidebar": {
+        "timetable": "Розклад",
         "statistics": "Статистика",
         "banners": "Банера/Cлайдери",
         "films": "Фільми",
@@ -100,7 +106,8 @@
     },
     "pages": {
         "addPage": "Додати сторінку",
-        "pageList": "Список сторінок"
+        "pageList": "Список сторінок",
+        "pagesName": "Назва сторінки"
     }
 
 }

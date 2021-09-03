@@ -13,7 +13,15 @@
       <div class="description">
         <label for="film-description">{{ $t("cinemaHall.hallDescription") }}</label>
         <textarea
-          v-model="editingHall.hallDescription"
+        v-if="lang == 'ru'"
+          v-model="editingHall.ruHallDescription"
+          type="text"
+          id="cinema-description"
+          :placeholder='$t("cinemaHall.hallDescription")'
+        ></textarea>
+        <textarea
+        v-else
+          v-model="editingHall.uaHallDescription"
           type="text"
           id="cinema-description"
           :placeholder='$t("cinemaHall.hallDescription")'
@@ -129,34 +137,14 @@ export default {
   name: "CinemaCard",
   props: ['editingHall'],
   data() {
-    return {
-      cinemaHall: {
-        creationDate: new Date().toLocaleDateString(),
-        cinemaHallGallery: [],
-        hallName: "",
-        hallDescription: "",
-        scheme: {
-          selectedFile: null,
-          imageUrl: "",
-          image: null,
-        },
-        bannerPhoto: {
-          selectedFile: null,
-          imageUrl: "",
-          image: null,
-        },
-        seo: {
-          url: "",
-          title: "",
-          keywords: "",
-          description: "",
-        },
-      },
-    };
+    return {};
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    }
+  },
   methods: {
-    languageActive() {},
     onPickSchemeFile() {
       this.$refs.schemeFileInput.click();
     },
@@ -227,26 +215,6 @@ export default {
   display: flex;
   flex-direction: column;
 }
-.language {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 30px;
-}
-.language button {
-  cursor: pointer;
-  background: darkgray;
-  padding: 20px 10px 0;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  border: none;
-}
-.language button:hover {
-  background: rgb(136, 136, 136);
-}
-.active {
-  background: rgb(255, 255, 255);
-}
-
 .container {
   display: flex;
   flex-direction: column;

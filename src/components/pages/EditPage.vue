@@ -12,22 +12,67 @@
         <div class="film-name">
           <label for="film-name">{{ $t("name") }}</label>
           <input
-            v-model="pageItem.title"
+            v-if="!pageItem.title && lang == 'ru'"
+            v-model="pageItem.ruPageName"
             type="text"
             id="film-name"
-            :placeholder='$t("name")'
+            :placeholder="$t('name')"
+          />
+          <input
+            v-if="pageItem.title && lang == 'ru'"
+            v-model="pageItem.ruTitle"
+            type="text"
+            id="film-name"
+            :placeholder="$t('name')"
+          />
+          <input
+            v-if="!pageItem.title && lang == 'ua'"
+            v-model="pageItem.uaPageName"
+            type="text"
+            id="film-name"
+            :placeholder="$t('name')"
+          />
+          <input
+            v-if="pageItem.title && lang == 'ua'"
+            v-model="pageItem.uaTitle"
+            type="text"
+            id="film-name"
+            :placeholder="$t('name')"
           />
         </div>
       </div>
-
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="pageItem.description"
+        v-if="lang == 'ru'"
+          v-model="pageItem.ruDescription"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
         ></textarea>
+        <textarea
+        v-else
+          v-model="pageItem.uaDescription"
+          type="text"
+          id="film-description"
+          :placeholder="$t('description')"
+        ></textarea>
+      </div>
+      <div v-if="pageItem.picture.imageUrl" class="main-picture">
+        <p>{{ $t("mainImage") }}</p>
+        <img :src="pageItem.picture.imageUrl" alt="picture" />
+        <input
+          type="file"
+          style="display: none"
+          ref="fileInput"
+          @change="onFileSelected"
+        />
+        <button @click="onPickFile" class="btn btn-primary">
+          {{ $t("add") }}
+        </button>
+        <button @click="removeImage" class="btn btn-danger">
+          {{ $t("delete") }}
+        </button>
       </div>
       <div class="picture-gallery">
         <p>{{ $t("imageGallery") }}</p>
@@ -106,15 +151,18 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import firebase from "firebase";
 export default {
   name: "EditPage",
-  props: ['pageItem'],
+  props: ["pageItem"],
   data() {
-    return {
-    };
+    return {};
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    }
+  },
   methods: {
     addImage() {
       this.pageItem.imageGallery.push({
@@ -155,14 +203,18 @@ export default {
     },
     async updateCinema() {
       try {
-        await firebase.database().ref('pages').child(this.pageItem.id).update(this.pageItem)
-        .then(() => {
-          alert('updated')
-        })
-      } catch(err) {
+        await firebase
+          .database()
+          .ref("pages")
+          .child(this.pageItem.id)
+          .update(this.pageItem)
+          .then(() => {
+            alert("updated");
+          });
+      } catch (err) {
         console.log(err);
       }
-      this.$emit("updatedPage", false)
+      this.$emit("updatedPage", false);
     },
   },
 };
@@ -211,6 +263,9 @@ label {
   justify-content: space-between;
   padding: 10px;
   box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
+}
+.main-picture img {
+  width: 450px;
 }
 .main-picture button {
   height: 40px;

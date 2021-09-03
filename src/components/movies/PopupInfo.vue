@@ -2,12 +2,28 @@
   <div class="popup">
     <div class="popup-header">
       <i class="far fa-times-circle" @click="closeInfo"></i>
-      <img :src="movie.imageUrl" alt="movie's picture" />
+      <img
+        v-if="!movie.picture.ruImageUrl || !movie.picture.uaImageUrl"
+        src="../../assets/films/noImage.jpeg"
+        alt="movie"
+      />
+      <img
+        v-if="lang == 'ru' && movie.picture.ruImageUrl"
+        :src="movie.picture.ruImageUrl"
+        alt="movie"
+      />
+      <img
+        v-if="lang == 'ua' && movie.picture.uaImageUrl"
+        :src="movie.picture.uaImageUrl"
+        alt="movie"
+      />
     </div>
     <div class="popup-main">
       <div class="info">
-        <h1>{{ movie.filmName }}</h1>
-        <p class="film-description">{{ movie.description }}</p>
+        <h1  v-if="lang == 'ru'">{{ movie.ruFilmName }}</h1>
+        <h1 v-else>{{ movie.uaFilmName }}</h1>
+        <p  v-if="lang == 'ru'" class="film-description">{{ movie.ruDescription }}</p>
+        <p v-else class="film-description">{{ movie.uaDescription }}</p>
         <div class="film-types">
           <span v-if="movie.filmType.twoD">2D</span>
           <span v-if="movie.filmType.threeD">3D</span>
@@ -32,6 +48,11 @@
 export default {
   name: "PopupInfo",
   props: ["movie", "isPopupVisible"],
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    },
+},
   methods: {
     closeInfo() {
       this.$emit("changePopupStatus", false);
@@ -58,6 +79,9 @@ export default {
   align-items: center;
   margin: 100px auto 20px;
   color: white;
+}
+.popup-header img {
+  width: 300px;
 }
 .popup-header i {
   position: absolute;

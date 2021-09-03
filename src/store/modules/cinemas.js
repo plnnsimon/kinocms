@@ -4,6 +4,7 @@ export default {
     state: {
         cinemas: [],
         isPopupVisible: false,
+        saveCinema: false
     },
     mutations: {
         setCinemas(state, payload) {
@@ -14,6 +15,9 @@ export default {
         },
         removeCinema(state, payload) {
             state.cinemas.filter(el => el != payload)
+        },
+        setSaving(state, payload) {
+            state.saveCinema = payload
         }
 
     },
@@ -27,13 +31,16 @@ export default {
                     for (let key in obj) {
                         cinemas.push({
                             cinemaId: key,
-                            logo: obj[key].logo || null,
-                            bannerPhoto: obj[key].bannerPhoto || null,
-                            cinemaName: obj[key].cinemaName,
-                            description: obj[key].description,
-                            conditions: obj[key].conditions,
+                            logo: obj[key].logo || '',
+                            bannerPhoto: obj[key].bannerPhoto || '',
+                            ruCinemaName: obj[key].ruCinemaName || '',
+                            uaCinemaName: obj[key].uaCinemaName || '',
+                            ruDescription: obj[key].ruDescription || '',
+                            uaDescription: obj[key].uaDescription || '',
+                            ruConditions: obj[key].ruConditions || '',
+                            uaConditions: obj[key].uaConditions || '',
                             cinemasGallery: obj[key].cinemasGallery || [],
-                            cinemaHalls: obj[key].cinemaHalls,
+                            cinemaHalls: obj[key].cinemaHalls || [],
                             seo: obj[key].seo
                         })
                     }
@@ -47,12 +54,15 @@ export default {
         },
         addCinema({ commit }, payload) {
             commit('setLoading', true)
+            commit('setSaving', true)
             firebase.database().ref('cinemas').push(payload)
                 .then(() => {
                     commit('addCinema', payload)
                     commit('setCinemas', payload)
+                    commit('setSaving', false)
+                    commit('setLoading', false)
                     alert("saved successfully")
-                    router.push('cinemas');
+                    router.push({ name: 'Cinemas' });
                 })
                 .catch(err => console.log(err))
             console.log('saved');
@@ -74,6 +84,9 @@ export default {
     getters: {
         cinemas(state) {
             return state.cinemas
+        },
+        saveCinema(state) {
+            return state.saveCinema
         }
     }
 }

@@ -12,7 +12,15 @@
         <div class="film-name">
           <label for="film-name">{{ $t("name") }}</label>
           <input
-            v-model="vipHall.title"
+          v-if="lang == 'ru'"
+            v-model="vipHall.ruTitle"
+            type="text"
+            id="film-name"
+            :placeholder='$t("name")'
+          />
+          <input
+          v-else
+            v-model="vipHall.uaTitle"
             type="text"
             id="film-name"
             :placeholder='$t("name")'
@@ -23,11 +31,35 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="vipHall.description"
+        v-if="lang == 'ru'"
+          v-model="vipHall.ruDescription"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
         ></textarea>
+        <textarea
+        v-else
+          v-model="vipHall.uaDescription"
+          type="text"
+          id="film-description"
+          :placeholder="$t('description')"
+        ></textarea>
+      </div>
+      <div class="main-picture">
+        <p>{{ $t("mainImage") }}</p>
+        <img :src="vipHall.picture.imageUrl" alt="picture" />
+        <input
+          type="file"
+          style="display: none"
+          ref="fileInput"
+          @change="(event) => onFileSelected(event, vipHall.picture)"
+        />
+        <button @click="onPickFile" class="btn btn-primary">
+          {{ $t("add") }}
+        </button>
+        <button @click="removeImage(vipHall.picture)" class="btn btn-danger">
+          {{ $t("delete") }}
+        </button>
       </div>
       <div class="picture-gallery">
         <p>{{ $t("imageGallery") }}</p>
@@ -60,39 +92,7 @@
           {{ $t("add") }}
         </button>
       </div>
-      <div class="seo">
-        <p>SEO блок:</p>
-        <form>
-          <label for="url">URL: </label>
-          <input
-            v-model="vipHall.seo.url"
-            type="text"
-            id="url"
-            placeholder="URL"
-          />
-          <label for="title">{{ $t("title") }}: </label>
-          <input
-            v-model="vipHall.seo.title"
-            type="text"
-            id="title"
-            :placeholder="$t('title')"
-          />
-          <label for="keywords">{{ $t("keywords") }}</label>
-          <input
-            v-model="vipHall.seo.keywords"
-            type="text"
-            id="keywords"
-            :placeholder="$t('keywords')"
-          />
-          <label for="description">{{ $t("description") }}: </label>
-          <textarea
-            v-model="vipHall.seo.description"
-            type="text"
-            id="description"
-            :placeholder="$t('description')"
-          ></textarea>
-        </form>
-      </div>
+     <SeoBlock :item="vipHall" />
       <div class="buttons">
         <button @click="savePage" class="btn btn-primary">{{ $t("save") }}</button>
       </div>
@@ -101,17 +101,28 @@
 </template>
 
 <script>
+import onFileSelected from '../../mixins/onFileSelected';
+import SeoBlock from '../SeoBlock.vue';
 export default {
+  components: { SeoBlock },
   name: "NewsPage",
+  mixins: [onFileSelected],
   data() {
     return {
       vipHall: {
-        pageName: 'VIP зал',
+        ruPageName: 'VIP зал',
+        uaPageName: 'VIP залa',
         imageGallery: [],
         checked: false,
-        title: "",
+        picture: {
+          selectedFile: null,
+          imageUrl: ''
+        },
+        ruTitle: "",
+        uaTitle: "",
         creationDate: new Date().toLocaleDateString(),
-        description: "",
+        ruDescription: "",
+        uaDescription: "",
         trailerLink: "",
         isEditing: false,
         seo: {
@@ -123,7 +134,10 @@ export default {
       },
     };
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    },},
   methods: {
     addImage() {
       this.vipHall.imageGallery.push({
@@ -133,19 +147,19 @@ export default {
     onPickFile() {
       this.$refs.fileInput.click();
     },
-    onFileSelected(event) {
-      const files = event.target.files;
-      this.vipHall.picture.selectedFile = files[0].name;
-      if (this.vipHall.picture.selectedFile.indexOf(".") <= 0) {
-        return alert("Please add a valid file");
-      }
-      const fileReader = new FileReader();
-      fileReader.addEventListener("load", () => {
-        this.vipHall.picture.imageUrl = fileReader.result;
-      });
-      fileReader.readAsDataURL(files[0]);
-      this.vipHall.picture.image = files[0];
-    },
+    // onFileSelected(event) {
+    //   const files = event.target.files;
+    //   this.vipHall.picture.selectedFile = files[0].name;
+    //   if (this.vipHall.picture.selectedFile.indexOf(".") <= 0) {
+    //     return alert("Please add a valid file");
+    //   }
+    //   const fileReader = new FileReader();
+    //   fileReader.addEventListener("load", () => {
+    //     this.vipHall.picture.imageUrl = fileReader.result;
+    //   });
+    //   fileReader.readAsDataURL(files[0]);
+    //   this.vipHall.picture.image = files[0];
+    // },
     removeImage() {
       this.vipHall.picture.imageUrl = "";
     },
@@ -257,36 +271,6 @@ label {
 }
 .trailer input {
   width: 80%;
-}
-.film-types {
-  display: flex;
-  margin-bottom: 20px;
-  padding: 10px;
-  box-shadow: 12px 4px 13px 4px rgb(0 0 0 / 50%);
-}
-.film-types p {
-  margin-right: 30px;
-}
-.checkbox {
-  margin-right: 10px;
-  width: 80px;
-}
-.seo {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 20px;
-  padding: 10px;
-  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
-}
-.seo form {
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  max-width: 600px;
-  width: 100%;
-}
-.seo p {
-  margin-right: 20px;
 }
 .buttons {
   display: flex;

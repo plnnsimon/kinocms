@@ -18,7 +18,8 @@
           <td>Статус</td>
         </tr>
         <tr v-for="(item, index) of promotions" :key="index">
-          <td>{{ item.promotionsTitle }}</td>
+          <td v-if="lang == 'ru'">{{ item.ruPromotionsTitle }}</td>
+          <td v-else>{{ item.uaPromotionsTitle }}</td>
           <td>{{ item.promotionsDate }}</td>
           <td v-if="item.checked">ВКЛ</td>
           <td v-else>{{ $t("promotions.table.off") }}</td>
@@ -60,6 +61,9 @@ export default {
     };
   },
   computed: {
+    lang() {
+      return this.$i18n.locale
+    },
     promotions() {
       return this.$store.getters.promotions;
     },

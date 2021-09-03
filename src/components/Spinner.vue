@@ -14,6 +14,7 @@ export default {
 .spinner {
   position: absolute;
   margin: 0 auto;
+  z-index: 100;
 }
 .lds-dual-ring {
   display: inline-block;

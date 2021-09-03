@@ -4,6 +4,13 @@
       <Spinner v-if="loading" />
     </div>
     <h2>{{ $t("pages.pageList") }}</h2>
+    <EditContacts
+      class="absolute"
+      v-if="isEditingContacts"
+      @updatedPage="updatedPage"
+      :pageItem="pageItem"
+      @cancelUpdate="cancelUpdate"
+    />
     <EditPage
       class="absolute"
       v-if="isEditingPage"
@@ -21,12 +28,13 @@
     <div class="table">
       <table v-if="!loading">
         <tr>
-          <td>{{ $t("news.table.name") }}</td>
+          <td>{{ $t("pages.pagesName") }}</td>
           <td>{{ $t("news.table.date") }}</td>
           <td>Статус</td>
         </tr>
         <tr v-for="(item, index) of pages" :key="index">
-          <td>{{ item.pageName }}</td>
+          <td v-if="lang == 'ru'">{{ item.ruPageName || item.ruTitle }}</td>
+          <td v-else>{{ item.uaPageName || item.uaTitle }}</td>
           <td>{{ item.creationDate }}</td>
           <td v-if="item.checked">ВКЛ</td>
           <td v-else>{{ $t("news.table.off") }}</td>
@@ -36,6 +44,7 @@
             class="fas fa-pen"
           ></i>
           <i
+            v-if="!item.ruPageName || !item.uaPageName"
             @click="deletePage(item)"
             class="fas fa-trash-alt"
             style="right: -60px"
@@ -58,13 +67,15 @@
 import Spinner from "../components/Spinner";
 import EditPage from "../components/pages/EditPage.vue";
 import EditMainPage from "../components/pages/EditMainPage.vue";
+import EditContacts from "../components/pages/EditContacts.vue";
 
 export default {
-  name: "News",
+  name: "Pages",
   components: {
     Spinner,
     EditPage,
     EditMainPage,
+    EditContacts,
   },
   data() {
     return {
@@ -75,6 +86,9 @@ export default {
     };
   },
   computed: {
+    lang() {
+      return this.$i18n.locale
+    },
     pages() {
       return this.$store.getters.pages;
     },
@@ -95,16 +109,17 @@ export default {
       this.$router.push("add_page");
     },
     editPageInfo(item) {
-      if (item.pageName == "Главная страница") {
+      if (item.ruPageName == "Главная страница" || item.uaPageName == "Головна сторінка") {
         this.isEditingMainPage = true;
         this.pageItem = item;
-      } else if (item.pageName == "Контакты") {
+      } else if (item.ruPageName == "Контакты" || item.uaPageName == "Контакти") {
         this.isEditingContacts = true;
         this.pageItem = item;
       } else {
         this.isEditingPage = true;
         this.pageItem = item;
       }
+      console.log(item);
     },
     cancelUpdate(data) {
       this.isEditingPage = data;
@@ -173,4 +188,5 @@ table i:hover {
   left: 0;
   bottom: -60px;
 }
+
 </style>

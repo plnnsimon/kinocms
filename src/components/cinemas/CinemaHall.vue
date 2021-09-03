@@ -13,7 +13,15 @@
       <div class="description">
         <label for="film-description">{{ $t("cinemaHall.hallDescription") }}</label>
         <textarea
-          v-model="cinemaHall.hallDescription"
+        v-if="lang == 'ru'"
+          v-model="cinemaHall.ruHallDescription"
+          type="text"
+          id="cinema-description"
+          :placeholder='$t("cinemaHall.hallDescription")'
+        ></textarea>
+        <textarea
+        v-else
+          v-model="cinemaHall.uaHallDescription"
           type="text"
           id="cinema-description"
           :placeholder='$t("cinemaHall.hallDescription")'
@@ -134,7 +142,8 @@ export default {
         creationDate: new Date().toLocaleDateString(),
         cinemaHallGallery: [],
         hallName: "",
-        hallDescription: "",
+        ruHallDescription: "",
+        uaHallDescription: "",
         scheme: {
           selectedFile: null,
           imageUrl: "",
@@ -154,7 +163,11 @@ export default {
       },
     };
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    }
+  },
   methods: {
     languageActive() {},
     onPickSchemeFile() {

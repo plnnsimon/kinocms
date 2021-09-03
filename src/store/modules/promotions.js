@@ -25,13 +25,7 @@ export default {
                     for (let key in obj) {
                         promotions.push({
                             promotionId: key,
-                            promotionsTitle: obj[key].promotionsTitle,
-                            description: obj[key].promotionsDescription,
-                            imageGallery: obj[key].imageGallery,
-                            checked: obj[key].checked,
-                            promotionsDate: obj[key].promotionsDate,
-                            trailerLink: obj[key].trailerLink,
-                            seo: obj[key].seo
+                            ...obj[key]
                         })
                     }
                     commit('setPromotions', promotions)
@@ -61,7 +55,7 @@ export default {
                     commit('setPromotions', payload)
                     commit('setLoading', false)
                     alert("saved successfully")
-                    router.push('promotions');
+                    router.push({ name: 'Promotions' });
                 })
                 .catch((err) => console.log(err))
             console.log("saved");

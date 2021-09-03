@@ -6,23 +6,44 @@
         @mouseover="removeImageIcon = true"
         @mouseleave="removeImageIcon = false"
         class="image"
-        v-if="banner.imageUrl"
       >
         <i
           v-if="removeImageIcon"
           class="fas fa-times"
-          @click="removeImage"
+          @click="removeImage(banner, lang)"
           :class="{ removeImage: removeImageIcon }"
         ></i>
-        <img :src="banner.imageUrl" height="150" />
+        <img
+          :src="getPick(banner, lang)"
+          height="150"
+        />
       </div>
-      <div v-if="!banner.imageUrl" class="selectImage">
-        <button class="btn btn-secondary mt-2" @click="onPickFile">
+      <div class="selectImage">
+        <button
+          v-if="!banner.ruImageUrl && lang == 'ru'"
+          class="btn btn-secondary mt-2"
+          @click="onPickFile"
+        >
+          {{ $t("banners.chooseImage") }}
+        </button>
+        <button
+          v-if="!banner.uaImageUrl && lang == 'ua'"
+          class="btn btn-secondary mt-2"
+          @click="onPickFile"
+        >
           {{ $t("banners.chooseImage") }}
         </button>
         <input
+          v-if="lang == 'ru'"
           type="file"
-          @change="onFileSelected"
+          @change="(event) => onFileSelected(event, banner, lang)"
+          style="display: none"
+          ref="fileInput"
+        />
+        <input
+          v-else-if="lang == 'ua'"
+          type="file"
+          @change="(event) => onFileSelected(event, banner, lang)"
           style="display: none"
           ref="fileInput"
         />
@@ -31,21 +52,39 @@
         <div class="inputs">
           <label for="url">URL:</label>
           <input
+            v-if="lang == 'ru'"
             class="form-control"
             type="text"
             name="url"
             placeholder="URL"
-            v-model="banner.url"
+            v-model="banner.ruUrl"
+          />
+          <input
+            v-else
+            class="form-control"
+            type="text"
+            name="url"
+            placeholder="URL"
+            v-model="banner.uaUrl"
           />
         </div>
         <div class="inputs">
           <label for="url">Текст:</label>
           <input
+            v-if="lang == 'ru'"
             class="form-control"
             type="text"
             name="text"
             placeholder="text"
-            v-model="banner.text"
+            v-model="banner.ruText"
+          />
+          <input
+            v-else
+            class="form-control"
+            type="text"
+            name="text"
+            placeholder="text"
+            v-model="banner.uaText"
           />
         </div>
       </div>
@@ -54,32 +93,26 @@
 </template>
 
 <script>
+import languageHelpers from '../../mixins/languageHelpers';
+import OnFileSelected from "../../mixins/onFileSelected";
 export default {
   name: "MainBanners",
+  components: {},
   props: ["storeBanners", "banner"],
+  mixins: [OnFileSelected, languageHelpers],
   data() {
     return {
       removeImageIcon: false,
     };
   },
+  computed: {
+    lang() {
+      return this.$i18n.locale;
+    },
+  },
   methods: {
     onPickFile() {
       this.$refs.fileInput.click();
-    },
-    onFileSelected(event) {
-      const files = event.target.files;
-      this.banner.selectedFile = files[0].name;
-      if (this.banner.selectedFile.indexOf(".") <= 0) {
-        return alert("Please add a valid file");
-      }
-      const fileReader = new FileReader();
-      fileReader.addEventListener("load", () => {
-        this.banner.imageUrl = fileReader.result;
-      });
-      fileReader.readAsDataURL(files[0]);
-    },
-    removeImage() {
-      this.banner.imageUrl = null;
     },
     removeBanner() {
       this.storeBanners.splice(this.storeBanners.indexOf(this.banner), 1);

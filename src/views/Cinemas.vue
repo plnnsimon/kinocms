@@ -5,39 +5,29 @@
         <Spinner v-if="loading" />
       </div>
       <h2>{{ $t("cinemas.cinemasList") }}</h2>
-      <div v-for="cinema in cinemas" :key="cinema.cinemaId" class="cinemas">
-        <CinemaPopupInfo
-          @changePopupStatus="isPopupVisible = $event"
-          v-if="isPopupVisible"
-          :cinema="cinema"
-        />
-        <EditCinemaPage
-          @changePopupStatus="isEditCinema = $event"
-          v-if="isEditCinema"
-          :cinema="cinema"
-          :isHallEditing="isHallEditing"
-          @updatedCinemaPage="updatedCinemaPage"
-          @cancelEditingCinema="cancelEditingCinema"
-        />
-        <div
-          @click="getInfo"
-          @mouseenter="removeCinema = true; editCinemaIcon = true"
-          @mouseleave="removeCinema = false; editCinemaIcon = false"
-          class="cinema"
-        >
-          <i
-            v-if="removeCinema"
-            @click="onRemoveCinema(cinema)"
-            class="fas fa-trash"
-          ></i>
-          <i
-            v-if="editCinemaIcon"
-            @click="editCinema"
-            class="fas fa-edit"
-            :class="{ editCinema: editCinemaIcon }"
-          ></i>
-          <img :src="cinema.logo" alt="logo" />
-          <h3>{{ cinema.cinemaName }}</h3>
+      <CinemaPopupInfo
+        @changePopupStatus="isPopupVisible = $event"
+        v-if="isPopupVisible"
+        :cinema="cinema"
+      />
+      <EditCinemaPage
+        @changePopupStatus="isEditCinema = $event"
+        v-if="isEditCinema"
+        :cinema="cinema"
+        :isHallEditing="isHallEditing"
+        @updatedCinemaPage="updatedCinemaPage"
+        @cancelEditingCinema="cancelEditingCinema"
+      />
+      <div class="cinemas">
+        <div v-for="cinema in cinemas" :key="cinema.cinemaId">
+          <Cinema
+            @onRemoveCinema="onRemoveCinema"
+            @editCinema="editCinema"
+            :cinema="cinema"
+            @getInfo="getInfo"
+            :loading="loading"
+          />
+          
         </div>
       </div>
     </div>
@@ -48,6 +38,7 @@
 import Spinner from "../components/Spinner";
 import CinemaPopupInfo from "../components/cinemas/CinemaPopupInfo";
 import EditCinemaPage from "../components/cinemas/EditCinemaPage";
+import Cinema from "../components/cinemas/Cinema.vue";
 
 export default {
   name: "Cinemas",
@@ -57,13 +48,15 @@ export default {
       editCinemaIcon: false,
       isPopupVisible: false,
       isEditCinema: false,
-      isHallEditing: false
+      isHallEditing: false,
+      cinema: null,
     };
   },
   components: {
     Spinner,
     CinemaPopupInfo,
-    EditCinemaPage
+    EditCinemaPage,
+    Cinema,
   },
   computed: {
     cinemas() {
@@ -78,18 +71,19 @@ export default {
   },
   methods: {
     cancelEditingCinema(data) {
-      this.isEditCinema = data
+      this.isEditCinema = data;
     },
-    getInfo() {
+    getInfo(data) {
       if (!this.filmCard) {
         this.isPopupVisible = true;
+        this.cinema = data;
       }
     },
-    onRemoveCinema(cinema) {
+    onRemoveCinema(data) {
       if (confirm("Are you sure ?")) {
         this.filmCard = true;
         try {
-          this.$store.dispatch("removeCinema", cinema.cinemaId);
+          this.$store.dispatch("removeCinema", data.cinemaId);
           this.$store.dispatch("loadCinemas");
         } catch (err) {
           console.log(err);
@@ -98,22 +92,22 @@ export default {
         this.isPopupVisible = true;
       }
     },
-    editCinema(e) {
-      if (confirm('Edit ?')) {
-        e.stopPropagation();
-        this.isEditCinema = true
-        this.isHallEditing = true
+    editCinema(data) {
+      if (confirm("Edit ?")) {
+        this.cinema = data;
+        this.isEditCinema = true;
+        this.isHallEditing = true;
       }
     },
     updatedCinemaPage(data) {
-      this.isEditCinema = data
-    }
+      this.isEditCinema = data;
+    },
   },
 };
 </script>
 
 <style scoped>
-.editCinema{
+.editCinema {
   margin-right: 20px;
 }
 .cinemas-container {

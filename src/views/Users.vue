@@ -6,7 +6,7 @@
     <EditUsers @closeEditingMenu="closeEditingMenu" v-if="isEditingUser" :user="user" />
     </div>
     <div class="table">
-      <table id="table" v-if="!loading">
+      <table id="table" >
         <thead>
           <tr>
             <td>ID</td>
@@ -21,7 +21,7 @@
         </thead>
         <tbody>
           <tr v-for="(user, index) of users" :key="index">
-            <td>{{ user.userId }}</td>
+            <td>{{ user.userId.substring(0,4)+'...' }}</td>
             <td>{{ user.registrationDate }}</td>
             <td>{{ user.birthDate }}</td>
             <td>{{ user.email }}</td>
@@ -62,7 +62,6 @@ export default {
   data() {
     return {
       isEditingUser: false,
-      editingUser: null,
       user: null
     };
   },
@@ -76,7 +75,9 @@ export default {
   },
   mounted() {
     this.$store.dispatch("loadUsers");
-    setTimeout(() => this.getTable(), 1000);
+    setTimeout(() => this.getTable(), 1000)
+      
+
   },
   methods: {
     async closeEditingMenu(data) {

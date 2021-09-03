@@ -27,7 +27,15 @@
       <div class="description">
         <label for="film-description">SEO текст:</label>
         <textarea
-          v-model="main_page.seoText"
+        v-if="lang == 'ru'"
+          v-model="main_page.ruSeoText"
+          type="text"
+          id="film-description"
+          placeholder="текст"
+        ></textarea>
+        <textarea
+        v-else
+          v-model="main_page.uaSeoText"
           type="text"
           id="film-description"
           placeholder="текст"
@@ -81,12 +89,14 @@ export default {
   data() {
     return {
       main_page: {
-        pageName: "Главная страница",
+        ruPageName: "Главная страница",
+        uaPageName: "Головна сторінка",
         creationDate: new Date().toLocaleDateString(),
         phone1: "",
         phone2: "",
         checked: false,
-        seoText: "",
+        ruSeoText: "",
+        uaSeoText: "",
         seo: {
           url: "",
           title: "",
@@ -96,7 +106,11 @@ export default {
       },
     };
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    }
+  },
   methods: {
     savePage() {
       this.$store.dispatch("addPage", this.main_page);

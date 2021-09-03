@@ -4,7 +4,15 @@
       <div class="film-name">
         <label for="film-name">{{ $t("cinemas.cinemasName") }}</label>
         <input
-          v-model="cinema.cinemaName"
+        v-if="lang == 'ru'"
+          v-model="cinema.ruCinemaName"
+          type="text"
+          id="cinema-name"
+          :placeholder="$t('cinemas.cinemasName')"
+        />
+        <input
+        v-else
+          v-model="cinema.uaCinemaName"
           type="text"
           id="cinema-name"
           :placeholder="$t('cinemas.cinemasName')"
@@ -13,7 +21,15 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="cinema.description"
+        v-if="lang == 'ru'"
+          v-model="cinema.ruDescription"
+          type="text"
+          id="cinema-description"
+          :placeholder="$t('description')"
+        ></textarea>
+        <textarea
+        v-else
+          v-model="cinema.uaDescription"
           type="text"
           id="cinema-description"
           :placeholder="$t('description')"
@@ -22,7 +38,15 @@
       <div class="description">
         <label for="film-description">{{ $t("cinemas.conditions") }}</label>
         <textarea
-          v-model="cinema.conditions"
+        v-if="lang == 'ru'"
+          v-model="cinema.ruConditions"
+          type="text"
+          id="cinema-conditions"
+          :placeholder="$t('cinemas.conditions')"
+        ></textarea>
+        <textarea
+        v-else
+          v-model="cinema.uaConditions"
           type="text"
           id="cinema-conditions"
           :placeholder="$t('cinemas.conditions')"
@@ -30,7 +54,7 @@
       </div>
       <div class="main-picture">
         <p>{{ $t("cinemas.logo") }}</p>
-        <img class="cinema-logo" :src="cinema.logo" alt="logo" />
+        <img class="cinema-logo" :src="cinema.logo.imageUrl" alt="logo" />
         <input
           type="file"
           style="display: none"
@@ -48,7 +72,7 @@
         <p>{{ $t("cinemas.mainBannerImage") }}</p>
         <img
           class="cinema-banner"
-          :src="cinema.bannerPhoto"
+          :src="cinema.bannerPhoto.imageUrl"
           alt="banner picture"
         />
         <input
@@ -195,7 +219,10 @@ export default {
       isHallEditing: false,
     };
   },
-  mounted() {
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    }
   },
   methods: {
     cancelEditing() {
@@ -308,26 +335,6 @@ export default {
   width: 100%;
   left: 0;
 }
-.language {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 30px;
-}
-.language button {
-  cursor: pointer;
-  background: darkgray;
-  padding: 20px 10px 0;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  border: none;
-}
-.language button:hover {
-  background: rgb(136, 136, 136);
-}
-.active {
-  background: rgb(255, 255, 255);
-}
-
 .container {
   display: flex;
   flex-direction: column;
@@ -452,5 +459,8 @@ table i {
 }
 table i:hover {
   color: rgb(117, 117, 117);
+}
+.cinema-banner {
+  max-width: 500px;
 }
 </style>

@@ -4,7 +4,15 @@
       <div class="film-name">
         <label for="film-name">{{ $t("filmName") }}</label>
         <input
-          v-model="movie_page.filmName"
+          v-if="lang == 'ua'"
+          v-model="movie_page.uaFilmName"
+          type="text"
+          id="film-name"
+          :placeholder="$t('filmName')"
+        />
+        <input
+          v-else
+          v-model="movie_page.ruFilmName"
           type="text"
           id="film-name"
           :placeholder="$t('filmName')"
@@ -13,7 +21,15 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="movie_page.movieDescription"
+          v-if="lang == 'ua'"
+          v-model="movie_page.uaDescription"
+          type="text"
+          id="film-description"
+          :placeholder="$t('description')"
+        ></textarea>
+        <textarea
+          v-else
+          v-model="movie_page.ruDescription"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
@@ -21,17 +37,37 @@
       </div>
       <div class="main-picture">
         <p>{{ $t("mainImage") }}</p>
-        <img :src="movie_page.picture.imageUrl" alt="picture" />
+        <img
+          v-if="lang == 'ru' && movie_page.picture.ruImageUrl"
+          :src="movie_page.picture.ruImageUrl"
+          alt="picture"
+        />
+        <img
+          v-if="lang == 'ua' && movie_page.picture.uaImageUrl"
+          :src="movie_page.picture.uaImageUrl"
+          alt="picture"
+        />
         <input
+          v-if="lang == 'ru'"
           type="file"
           style="display: none"
           ref="fileInput"
-          @change="onFileSelected"
+          @change="(event) => onFileSelected(event, movie_page.picture, lang)"
+        />
+        <input
+          v-if="lang == 'ua'"
+          type="file"
+          style="display: none"
+          ref="fileInput"
+          @change="(event) => onFileSelected(event, movie_page.picture, lang)"
         />
         <button @click="onPickFile" class="btn btn-primary">
           {{ $t("add") }}
         </button>
-        <button @click="removeImage" class="btn btn-danger">
+        <button
+          @click="removeImage(movie_page.picture, lang)"
+          class="btn btn-danger"
+        >
           {{ $t("delete") }}
         </button>
       </div>
@@ -76,7 +112,15 @@
       <div class="trailer">
         <label for="trailer">{{ $t("trailerLink") }}</label>
         <input
-          v-model="movie_page.trailerLink"
+          v-if="lang == 'ru'"
+          v-model="movie_page.ruTrailerLink"
+          type="text"
+          id="trailer"
+          :placeholder="$t('mainImage') + ' в youtube'"
+        />
+        <input
+          v-else
+          v-model="movie_page.uaTrailerLink"
           type="text"
           id="trailer"
           :placeholder="$t('mainImage') + ' в youtube'"
@@ -121,41 +165,46 @@
             name="soon"
             id="soon"
           />
+          <div v-if="movie_page.soonShawn">
+            <input v-model="movie_page.releaseDate" type="date" />
+          </div>
         </div>
       </div>
-      <div class="seo">
-        <p>SEO блок:</p>
-        <form>
-          <label for="url">URL: </label>
-          <input
-            v-model="movie_page.seo.url"
-            type="text"
-            id="url"
-            placeholder="URL"
-          />
-          <label for="title">{{ $t("title") }}: </label>
-          <input
-            v-model="movie_page.seo.title"
-            type="text"
-            id="title"
-            :placeholder="$t('title')"
-          />
-          <label for="keywords">{{ $t("keywords") }}: </label>
-          <input
-            v-model="movie_page.seo.keywords"
-            type="text"
-            id="keywords"
-            :placeholder="$t('keywords')"
-          />
-          <label for="description">{{ $t("description") }}: </label>
-          <textarea
-            v-model="movie_page.seo.description"
-            type="text"
-            id="description"
-            :placeholder="$t('description')"
-          ></textarea>
-        </form>
+      <div class="film__timetable">
+        <!-- <input type="date" v-model="date" /> -->
+        <input type="time" v-model="time" />
+        <select name="" id="" v-model="selectedCinema">
+          <option v-for="cinema in cinemas" :key="cinema.cinemaId" :value="cinema.cinemaId" >{{ cinema.ruCinemaName }}</option>
+        </select>
+        {{ selectedCinema }}
+        <select name="" id="" v-model="selectedHall">
+          <option v-for="(hall, index) in getCinemaHalls" :key="index" :value="hall.hallName">{{ hall.hallName }}</option>
+        </select>
+        {{ selectedHall }}
+        <div
+          v-for="(variation, key) in filmTypes"
+          :key="key"
+          class="radio__btns"
+        >
+          <label>
+            {{ key }}
+            <input
+              :value="variation"
+              type="checkbox"
+              v-model="filmTypes[key]"
+              name="filmType"
+            />
+          </label>
+        </div>
+        <div>
+          {{ filmTypes }}
+          {{ movie_page.timetable }}
+        </div>
+        <button class="btn btn-primary" @click="addTimeTable">
+          Add timetable
+        </button>
       </div>
+      <SeoBlock :item="movie_page" />
       <div class="buttons">
         <button @click="savePage" class="btn btn-primary">
           {{ $t("save") }}
@@ -169,24 +218,36 @@
 </template>
 
 <script>
+import SeoBlock from "../SeoBlock.vue";
+import OnFileSelected from "../../mixins/onFileSelected";
 export default {
   name: "MoviePage",
+  mixins: [OnFileSelected],
+  components: {
+    SeoBlock,
+  },
   data() {
     return {
       movie_page: {
         imageGallery: [],
-        filmName: "",
-        movieDescription: "",
+        ruFilmName: "",
+        uaFilmName: "",
+        uaDescription: "",
+        ruDescription: "",
         trailerLink: "",
+        timetable: [],
         filmType: {
           twoD: false,
           threeD: false,
           imax: false,
         },
         soonShawn: false,
+        releaseDate: "",
         picture: {
-          selectedFile: null,
-          imageUrl: "",
+          ruSelectedFile: null,
+          uaSelectedFile: null,
+          ruImageUrl: "",
+          uaImageUrl: "",
           image: null,
         },
         seo: {
@@ -197,6 +258,11 @@ export default {
         },
       },
     };
+  },
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    },
   },
   methods: {
     addImage() {
@@ -210,19 +276,6 @@ export default {
     onPickImageGalleryFile(index) {
       this.$refs.galleryImageFile[index].click();
     },
-    onFileSelected(event) {
-      const files = event.target.files;
-      this.movie_page.picture.selectedFile = files[0].name;
-      if (this.movie_page.picture.selectedFile.indexOf(".") <= 0) {
-        return alert("Please add a valid file");
-      }
-      const fileReader = new FileReader();
-      fileReader.addEventListener("load", () => {
-        this.movie_page.picture.imageUrl = fileReader.result;
-      });
-      fileReader.readAsDataURL(files[0]);
-      this.movie_page.picture.image = files[0];
-    },
     onGalleryImageSelected(index) {
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
@@ -232,9 +285,6 @@ export default {
     },
     removeGalleryImage(index) {
       this.movie_page.imageGallery.splice(index, 1);
-    },
-    removeImage() {
-      this.movie_page.picture.imageUrl = "";
     },
     savePage() {
       let movie = { ...this.movie_page };
@@ -315,6 +365,10 @@ label {
   padding: 10px;
   box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
 }
+.main-picture img {
+  max-width: 310px;
+  width: 100%;
+}
 .main-picture button {
   height: 40px;
 }
@@ -375,23 +429,6 @@ label {
 .checkbox {
   margin-right: 10px;
   width: 80px;
-}
-.seo {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 20px;
-  padding: 10px;
-  box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
-}
-.seo form {
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  max-width: 600px;
-  width: 100%;
-}
-.seo p {
-  margin-right: 20px;
 }
 .buttons {
   display: flex;

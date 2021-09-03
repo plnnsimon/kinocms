@@ -12,10 +12,18 @@
         <div class="film-name">
           <label for="film-name">{{ $t("news.newsName") }}</label>
           <input
-            v-model="news_page.newsTitle"
+            v-if="lang == 'ru'"
+            v-model="news_page.ruNewsTitle"
             type="text"
             id="film-name"
-            :placeholder='$t("news.newsName")'
+            :placeholder="$t('news.newsName')"
+          />
+          <input
+            v-else
+            v-model="news_page.uaNewsTitle"
+            type="text"
+            id="film-name"
+            :placeholder="$t('news.newsName')"
           />
         </div>
         <div class="date-input">
@@ -27,11 +35,34 @@
           />
         </div>
       </div>
-
+      <div class="main-picture">
+        <p>{{ $t("mainImage") }}</p>
+        <img :src="news_page.picture.imageUrl" alt="picture" />
+        <input
+          type="file"
+          style="display: none"
+          ref="fileInput"
+          @change="(event) => onFileSelected(event, news_page.picture)"
+        />
+        <button @click="onPickFile" class="btn btn-primary">
+          {{ $t("add") }}
+        </button>
+        <button @click="removeImage(news_page.picture)" class="btn btn-danger">
+          {{ $t("delete") }}
+        </button>
+      </div>
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="news_page.newsDescription"
+          v-if="lang == 'ru'"
+          v-model="news_page.ruNewsDescription"
+          type="text"
+          id="film-description"
+          :placeholder="$t('description')"
+        ></textarea>
+        <textarea
+          v-else
+          v-model="news_page.uaNewsDescription"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
@@ -77,59 +108,39 @@
           :placeholder="$t('mainImage') + ' в youtube'"
         />
       </div>
-      <div class="seo">
-        <p>SEO блок:</p>
-        <form>
-          <label for="url">URL: </label>
-          <input
-            v-model="news_page.seo.url"
-            type="text"
-            id="url"
-            placeholder="URL"
-          />
-          <label for="title">{{ $t("title") }}: </label>
-          <input
-            v-model="news_page.seo.title"
-            type="text"
-            id="title"
-            :placeholder="$t('title')"
-          />
-          <label for="keywords">{{ $t("keywords") }}</label>
-          <input
-            v-model="news_page.seo.keywords"
-            type="text"
-            id="keywords"
-            :placeholder="$t('keywords')"
-          />
-          <label for="description">{{ $t("description") }}: </label>
-          <textarea
-            v-model="news_page.seo.description"
-            type="text"
-            id="description"
-            :placeholder="$t('description')"
-          ></textarea>
-        </form>
-      </div>
+      <SeoBlock :item="news_page" />
       <div class="buttons">
-        <button @click="savePage" class="btn btn-primary">{{ $t("save") }}</button>
+        <button @click="savePage" class="btn btn-primary">
+          {{ $t("save") }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import onFileSelected from '../../mixins/onFileSelected';
+import SeoBlock from '../SeoBlock.vue';
 export default {
+  components: { SeoBlock },
   name: "NewsPage",
+  mixins: [onFileSelected],
   data() {
     return {
       news_page: {
         imageGallery: [],
         checked: false,
-        newsTitle: "",
+        ruNewsTitle: "",
+        uaNewsTitle: "",
         newsDate: "",
-        newsDescription: "",
+        ruNewsDescription: "",
+        uaNewsDescription: "",
         trailerLink: "",
         isEditing: false,
+        picture: {
+          selectedFile: null,
+          imageUrl: "",
+        },
         seo: {
           url: "",
           title: "",
@@ -139,7 +150,11 @@ export default {
       },
     };
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale;
+    },
+  },
   methods: {
     addImage() {
       this.news_page.imageGallery.push({
@@ -175,26 +190,6 @@ export default {
   flex-direction: column;
   position: relative;
 }
-.language {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 30px;
-}
-.language button {
-  cursor: pointer;
-  background: darkgray;
-  padding: 20px 10px 0;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-  border: none;
-}
-.language button:hover {
-  background: rgb(136, 136, 136);
-}
-.active {
-  background: rgb(255, 255, 255);
-}
-
 .container {
   display: flex;
   flex-direction: column;
@@ -229,6 +224,9 @@ label {
   justify-content: space-between;
   padding: 10px;
   box-shadow: 12px 4px 13px 4px rgb(0, 0, 0, 50%);
+}
+.main-picture img {
+  max-width: 400px;
 }
 .main-picture button {
   height: 40px;

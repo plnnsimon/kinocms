@@ -15,6 +15,9 @@
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <button @click="addAdmin" class="btn">Add admin</button>
+      <router-link :to="{path: '/'}">
+        To Main Page
+      </router-link>
 
       <div class="languages">
         <img v-if="lang == 'ru'" src="../assets/i18n/ru.png" alt="ru" />
@@ -54,6 +57,7 @@ export default {
   methods: {
     onSignOut() {
       this.$store.dispatch("signOut");
+      this.$emit('showPage', true)
     },
     handleChange(event) {
       localStorage.setItem("lang", event.target.value);
@@ -64,7 +68,7 @@ export default {
     },
     addAdmin() {
       this.$router.replace({ name: 'Registration' })
-    }
+    },
   },
 };
 </script>

@@ -2,14 +2,17 @@
   <div class="popup">
     <div class="popup-header">
       <i class="far fa-times-circle" @click="closeInfo"></i>
-      <img :src="cinema.logo" alt="movie's picture" />
+      <img :src="cinema.logo.imageUrl" alt="movie's picture" />
     </div>
     <div class="popup-main">
       <div class="info">
-        <h1>{{ cinema.cinemaName }}</h1>
-        <p class="film-description">{{ cinema.description }}</p>
+        <h1 v-if="lang == 'ru'">{{ cinema.ruCinemaName }}</h1>
+        <h1 v-else>{{ cinema.uaCinemaName }}</h1>
+        <p v-if="lang == 'ru'" class="film-description">{{ cinema.ruDescription }}</p>
+        <p v-else class="film-description">{{ cinema.uaDescription }}</p>
         <hr />
-        <p class="film-description">{{ cinema.conditions }}</p>
+        <p v-if="lang == 'ru'" class="film-description">{{ cinema.ruConditions }}</p>
+        <p v-else class="film-description">{{ cinema.uaConditions }}</p>
       </div>
       <div class="imageWrapper">
         <div
@@ -41,6 +44,11 @@
 export default {
   name: "PopupInfo",
   props: ["cinema", "isPopupVisible"],
+  computed: {
+    lang() {
+      return this.$i18n.locale
+    }
+  },
   mounted() {
     console.log(this.cinema);
   },

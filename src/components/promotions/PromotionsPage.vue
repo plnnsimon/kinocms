@@ -12,7 +12,15 @@
         <div class="film-name">
           <label for="film-name">{{ $t("promotions.promotionsName") }}</label>
           <input
-            v-model="promotions.promotionsTitle"
+          v-if="lang == 'ru'"
+            v-model="promotions.ruPromotionsTitle"
+            type="text"
+            id="film-name"
+            :placeholder='$t("promotions.promotionsName")'
+          />
+          <input
+          v-else
+            v-model="promotions.uaPromotionsTitle"
             type="text"
             id="film-name"
             :placeholder='$t("promotions.promotionsName")'
@@ -31,7 +39,15 @@
       <div class="description">
         <label for="film-description">{{ $t("description") }}</label>
         <textarea
-          v-model="promotions.promotionsDescription"
+        v-if="lang == 'ru'"
+          v-model="promotions.ruDescription"
+          type="text"
+          id="film-description"
+          :placeholder="$t('description')"
+        ></textarea>
+        <textarea
+        v-else
+          v-model="promotions.uaDescription"
           type="text"
           id="film-description"
           :placeholder="$t('description')"
@@ -125,9 +141,11 @@ export default {
       promotions: {
         imageGallery: [],
         checked: false,
-        promotionsTitle: "",
+        ruPromotionsTitle: "",
+        uaPromotionsTitle: "",
         promotionsDate: "",
-        promotionsDescription: "",
+        ruDescription: "",
+        uaDescription: "",
         trailerLink: "",
         isEditing: false,
         seo: {
@@ -139,7 +157,11 @@ export default {
       },
     };
   },
-  mounted() {},
+  computed: {
+    lang() {
+      return this.$i18n.locale;
+    },
+  },
   methods: {
     addImage() {
       this.promotions.imageGallery.push({

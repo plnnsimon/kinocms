@@ -6,6 +6,9 @@ export default {
         isLoggedIn: false,
         users: [],
         admin: null,
+        user: null,
+        message: false,
+        registrationMessage: false,
     },
     mutations: {
         setIsLoggedIn(state, payload) {
@@ -19,32 +22,42 @@ export default {
         },
         setAdmin(state, payload) {
             state.admin = payload
+        },
+        setUser(state, payload) {
+            state.user = payload
+        },
+        setMessage(state, payload) {
+            state.message = payload
+        },
+        setRegistrationMessage(state, payload) {
+            state.registrationMessage = payload
         }
     },
 
     actions: {
         async logIn({ commit }, payload) {
             commit('setLoading', true)
-            if (payload) {
-                await firebase
-                    .auth()
-                    .signInWithEmailAndPassword(payload.email, payload.password)
-                    .then(() => {
-                        commit('setLoading', false)
-                        commit('setIsLoggedIn', true)
-                        router.replace('/');
-                    })
-                    .catch((err) => {
-                        console.log(err + "from");
-                        alert("you are not administrator!");
-                        commit('setLoading', false)
-                        return
-                    });
-            } else {
-                alert("you are not administrator")
-                commit('setLoading', false)
-                return
-            }
+            await firebase
+                .auth()
+                .signInWithEmailAndPassword(payload.email, payload.password)
+                .then((data) => {
+                    if (data.user.uid == "11p2flnCwNSo2UwbFstZlaJYd5n2") {
+                        commit('setMessage', true)
+                    } else {
+                        commit('setMessage', true)
+                    }
+                    setTimeout(() => {
+                        commit('setMessage', false)
+                    }, 6000)
+                    if (data) {
+                        router.push({ name: 'kino-cms' }).catch(err => err)
+                    }
+                })
+                .catch((err) => {
+                    console.log(err + "from");
+                    alert("Incorrect email or password, please try again...")
+                    commit('setLoading', false)
+                });
 
         },
         async removeUser({ commit }, payload) {
@@ -67,7 +80,7 @@ export default {
                     const obj = data.val()
                     for (let key in obj) {
                         users.push({
-                            userId: key,
+                            key: key,
                             ...obj[key]
                         })
                     }
@@ -76,19 +89,32 @@ export default {
                 })
         },
         setupFirebase({ commit }) {
+            commit('setLoading', true)
             firebase.auth().onAuthStateChanged((user) => {
                 if (user) {
-                    // Admin is signed in.
-                    commit('setAdmin', user)
-                    console.log("signed in");
-                    commit('setIsLoggedIn', true)
-                        // console.log(firebase.auth().currentUser);
+                    if (user.uid == "11p2flnCwNSo2UwbFstZlaJYd5n2") {
+
+                        // Admin is signed in.
+                        console.log();
+                        commit('setAdmin', user)
+                        console.log("signed in");
+                        commit('setIsLoggedIn', true)
+                        console.log("admin");
+                        commit('setLoading', false)
+
+                    } else {
+                        commit('setUser', user)
+                        console.log("signed in");
+                        commit('setIsLoggedIn', true)
+                        console.log("user");
+                        commit('setLoading', false)
+                    }
 
                 } else {
                     // No user is signed in.
                     commit('setIsLoggedIn', false)
                     console.log("signed out");
-                    router.replace('/login').catch(() => {});
+                    commit('setLoading', false)
                 }
             });
         },
@@ -96,7 +122,13 @@ export default {
             firebase.auth().signOut()
                 .then(() => {
                     commit('setIsLoggedIn', false)
-                    router.replace('/login').catch(err => console.log(err))
+                    commit('setUser', null)
+                    commit('setAdmin', null)
+                    commit('setMessage', true)
+                    setTimeout(() => {
+                        commit('setMessage', false)
+                    }, 6000)
+                    router.push('/').catch(err => err)
                 })
         },
         async updateUser({ commit }, payload) {
@@ -121,6 +153,15 @@ export default {
         },
         admin(state) {
             return state.admin
+        },
+        user(state) {
+            return state.user
+        },
+        message(state) {
+            return state.message
+        },
+        registrationMessage(state) {
+            return state.registrationMessage
         }
 
     }

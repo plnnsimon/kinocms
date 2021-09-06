@@ -1,9 +1,9 @@
-import i18n from '../i18n'
+// import i18n from '../i18n'
 import firebase from 'firebase'
 export default {
     data() {
         return {
-            lang: i18n.locale,
+            // lang: i18n.locale,
             timetable: []
         }
     },
@@ -16,6 +16,9 @@ export default {
                 return `${this.lang}-${this.lang.toUpperCase()}`
             }
         },
+        lang() {
+            return this.$i18n.locale
+        }
 
     },
     methods: {

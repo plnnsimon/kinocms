@@ -13,30 +13,101 @@
     </div>
     <div class="movie__time">
       <div class="time__top">
-        <p>Расписание сеансов кинотеатра:</p>
-        <select name="" id="">
-          <option v-for="cinema in cinemas" :key="cinema.cinemaId" value="">{{ getCinemaName(cinema) }}</option>
-        </select>
-        <span>
-          <label for="all">Все</label>
-          <input id="all" type="checkbox" />
-        </span>
-        <span>
-          <label for="3d">3D</label>
-          <input id="3d" type="checkbox" />
-        </span>
-        <span>
-          <label for="2d">2D</label>
-          <input id="2d" type="checkbox" />
-        </span>
+        <div>
+          <p>Расписание сеансов кинотеатра:</p>
+          <select name="" id="" v-model="selectedCinema">
+            <option value="">{{ $t("cinema") }}</option>
+            <option
+              v-for="cinema in cinemas"
+              :key="cinema.cinemaId"
+              :value="cinema.cinemaId"
+            >
+              {{ getCinemaName(cinema) }}
+            </option>
+          </select>
+          <span>
+            <label for="all">IMAX</label>
+            <input
+              name="type"
+              id="all"
+              type="radio"
+              value="IMAX"
+              v-model="selectedType"
+            />
+          </span>
+          <span>
+            <label for="3d">3D</label>
+            <input
+              name="type"
+              id="3d"
+              type="radio"
+              value="3D"
+              v-model="selectedType"
+            />
+          </span>
+          <span>
+            <label for="2d">2D</label>
+            <input
+              name="type"
+              id="2d"
+              type="radio"
+              value="2D"
+              v-model="selectedType"
+            />
+          </span>
+        </div>
+        <div class="timetable">
+          <label
+            :for="index"
+            class="timetable__item"
+            v-for="(time, index) in getWeek('short')"
+            :key="index"
+            :class="{ active: selectedDate == time.day }"
+          >
+            <p>{{ time.day }}</p>
+            <p>{{ time.weekday[0].toUpperCase() + time.weekday[1] }}</p>
+            <p>{{ time.month }}</p>
+            <input
+              name="timetable"
+              style="display: none"
+              type="radio"
+              :id="index"
+              v-model="selectedDate"
+              :value="time.day"
+            />
+          </label>
+        </div>
       </div>
       <div class="days">
-        <span v-for="(item, index) in movie.timetable" :key="index">
-          <p>{{ item.time }}</p>
-          <p>{{ item.filmType }}</p>
-          <p>Зал {{ item.hall }}</p>
-          <!-- <p>{{ getMonth(item.date) }}</p> -->
+        {{ selCinema }}
+        <span
+        class="days__container"
+          v-for="(item, index) in getMovieTimetable(
+            movie,
+            selectedCinema,
+            selectedDate,
+            selectedType
+          )"
+          :key="index"
+        >
+          <span>
+            <p>{{ item.time }}</p>
+            <p>{{ item.type }}</p>
+          </span>
+          <span>
+            <p>Зал {{ item.hall }}</p>
+            <p>{{ item.price }} грн.</p>
+          </span>
         </span>
+        <Spinner v-if="loading" />
+        <p
+          v-if="
+            getMovieTimetable(movie, selectedCinema, selectedDate, selectedType)
+              .length <= 0
+          "
+        >
+          На эту дату фильмов нету...
+        </p>
       </div>
     </div>
     <div class="movie__info">
@@ -56,7 +127,7 @@
       <Carousel :array="movie.imageGallery" />
     </div>
     <div class="movie__advertisement">
-      <ContextAdvertisement :pages="pages" :lang="lang" />
+      <ContextAdvertisement />
     </div>
   </div>
 </template>
@@ -66,32 +137,44 @@ import { mapGetters } from "vuex";
 import Carousel from "../users-main-page/Carousel.vue";
 import ContextAdvertisement from "../users-main-page/ContextAdvertisement.vue";
 import languageHelpers from "../../mixins/languageHelpers";
+import Spinner from "../Spinner.vue";
 export default {
-  components: { ContextAdvertisement, Carousel },
+  components: { ContextAdvertisement, Carousel, Spinner },
   name: "MoviePageInfo",
   data() {
-    return {};
+    return {
+      timetable: [],
+      selectedCinema: "",
+      selectedDate: "",
+      selectedType: "",
+    };
   },
   mixins: [languageHelpers],
+  async mounted() {
+    await this.getTimetable();
+  },
   computed: {
-    ...mapGetters(["movies", "pages", 'cinemas']),
+    ...mapGetters(["movies", "pages", "cinemas", "loading"]),
     movie() {
       const movie = this.movies.find(
         (movie) => movie.filmId == this.$route.params.movieId
       );
       return movie;
     },
+    selCinema() {
+      let selCinema = this.cinemas.find(
+        (el) => el.cinemaId == this.selectedCinema
+      );
+      if (selCinema) {
+        return this.getCinemaName(selCinema);
+      } else {
+        return "";
+      }
+    },
   },
   created() {
     this.$store.dispatch("loadMovies");
     this.$store.dispatch("loadCinemas");
-    const movie = this.movies.find(
-      (movie) => movie.filmId == this.$route.params.movieId
-    );
-    console.log(movie);
-    if (movie) {
-      this.movie = movie;
-    }
   },
   methods: {
     getMonth(data) {
@@ -105,11 +188,38 @@ export default {
         });
       }
     },
-  }
+  },
 };
 </script>
 
 <style scoped>
+.active {
+  background: #ff57229c;
+}
+.timetable {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.timetable__item {
+  border-radius: 10px;
+  border: 1px solid;
+  margin-right: 20px;
+  display: flex;
+  flex-flow: row wrap;
+  width: 50px;
+  justify-content: space-around;
+  cursor: pointer;
+}
+.timetable__item p {
+  margin: 0;
+  font-weight: 700;
+  border-bottom: 1px solid;
+}
+.timetable__item p:nth-child(3) {
+  font-weight: 400;
+  border: none;
+}
 .movie__page {
   background: white;
   padding: 100px 10px 180px;
@@ -120,7 +230,7 @@ export default {
 .video {
   padding: 10px;
   display: flex;
-    justify-content: center;
+  justify-content: center;
 }
 .movie__time {
   display: flex;
@@ -130,6 +240,11 @@ export default {
 }
 .time__top {
   display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.time__top div:nth-child(1) {
+  display: flex;
   justify-content: space-around;
   width: 100%;
 }
@@ -137,13 +252,33 @@ export default {
   display: flex;
   width: 100%;
   justify-content: space-around;
-  padding-top: 20px;
+  padding: 20px 0;
 }
-.days span {
+.days__container {
   display: flex;
-    max-width: 100px;
-    flex-flow: row wrap;
-    border: 1px solid;
+  flex-direction: column;
+  max-width: 125px;
+  border: 1px solid;
+}
+.days__container span p {
+  margin: 0 !important;
+  padding: 5px;
+}
+.days__container span {
+  display: flex;
+  justify-content: space-around;
+}
+.days__container span:nth-child(1) {
+  border-bottom: 1px solid;
+}
+.days__container span:nth-child(1) p {
+  font-weight: 700;
+}
+.days__container span:nth-child(1) p:nth-child(1) {
+  border-right: 1px solid;
+}
+.days__container span:nth-child(2) p:nth-child(1) {
+  border-right: 1px solid;
 }
 .days span p {
   margin-right: 5px;

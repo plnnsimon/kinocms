@@ -5,7 +5,7 @@
         <router-link :to="{ name: 'Poster' }"> {{ $t("poster") }} </router-link>
       </li>
       <li>
-        <router-link :to="{ name: 'Timetable' }">
+        <router-link :to="{ name: 'users_timetable' }">
           {{ $t("timetable") }}
         </router-link>
       </li>
@@ -29,7 +29,7 @@
         @mouseleave="dropDown = false"
         class="dropDown"
       >
-        <router-link :to="{ name: '' }">
+        <router-link :to="{ name: 'about_cinema' }">
           {{ $t("aboutCinema.aboutCinema") }}
         </router-link>
         <ul class="dropDown__menu" :class="{ 'menu-open': dropDown }">

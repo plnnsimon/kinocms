@@ -13,7 +13,7 @@
           </router-link>
           <ul>
             <li>
-              <router-link :to="{ name: 'Timetable' }">
+              <router-link :to="{ name: 'users_timetable' }">
                 {{ $t("timetable") }}
               </router-link>
             </li>
@@ -35,7 +35,7 @@
           </ul>
         </li>
         <li>
-          <router-link :to="{ name: '' }" class="nav__main">
+          <router-link :to="{ name: 'about_cinema' }" class="nav__main">
             {{ $t("aboutCinema.aboutCinema") }}
           </router-link>
           <ul>

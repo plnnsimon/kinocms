@@ -58,6 +58,12 @@ const routes = [{
                             import ( /* webpackChunkName: "about" */ '../views/users-views/HallInfo')
                     },
                     {
+                        path: 'cinema',
+                        name: 'about_cinema',
+                        component: () =>
+                            import ( /* webpackChunkName: "about" */ '../views/users-views/AboutCinema')
+                    },
+                    {
                         path: 'movies/:movieId',
                         name: 'moviePage',
                         component: () =>
@@ -117,19 +123,9 @@ const routes = [{
                         component: () =>
                             import ( /* webpackChunkName: "about" */ '../views/users-views/UserOffice')
                     },
-                ]
-            },
-
-
-
-            {
-                path: `kino-cms`,
-                name: 'kino-cms',
-                component: () =>
-                    import ( /* webpackChunkName: "about" */ '../components/UsersMainPage'),
-                children: [{
+                    {
                         path: 'timetable',
-                        name: 'Timetable',
+                        name: 'users_timetable',
                         component: () =>
                             import ( /* webpackChunkName: "about" */ '../views/users-views/Timetable')
                     },
@@ -140,6 +136,15 @@ const routes = [{
                             import ( /* webpackChunkName: "about" */ '../views/users-views/UsersMobile')
                     },
                 ]
+            },
+
+
+
+            {
+                path: `kino-cms`,
+                name: 'kino-cms',
+                component: () =>
+                    import ( /* webpackChunkName: "about" */ '../components/UsersMainPage')
             },
             {
                 path: `admin`,

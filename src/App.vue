@@ -35,6 +35,7 @@ export default {
 }
 .item {
     padding: 5px 10px;
+    background: black;
 }
 .item a {
     color: white;

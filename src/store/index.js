@@ -17,12 +17,14 @@ Vue.prototype.$axios = axios;
 Vue.use(Vuex)
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDqemGHgKb_JUWqC5_T1YhA-xydruFigKQ",
-    authDomain: "kinocms-43f31.firebaseapp.com",
-    projectId: "kinocms-43f31",
-    storageBucket: "gs://kinocms-43f31.appspot.com",
-    messagingSenderId: "476797615031",
-    appId: "1:476797615031:web:62073167c0e88b0ee00632"
+    apiKey: "AIzaSyBEuT5qWbHsZTeuyj27fSjlnmum400oh38",
+    authDomain: "kino-cms-2.firebaseapp.com",
+    databaseURL: "https://kino-cms-2-default-rtdb.firebaseio.com",
+    projectId: "kino-cms-2",
+    storageBucket: "kino-cms-2.appspot.com",
+    messagingSenderId: "330102524828",
+    appId: "1:330102524828:web:582e177a22f67149679659",
+    measurementId: "G-1C56LFC1YT"
 };
 
 firebase.initializeApp(firebaseConfig);

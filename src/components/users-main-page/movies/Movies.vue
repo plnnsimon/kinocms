@@ -6,8 +6,8 @@
         <router-link
           :to="{ name: 'moviePage', params: { movieId: movie.filmId } }"
         >
-          <p v-if="!movie.releaseDate">Сейчас в кино</p>
-          <p v-if="movie.releaseDate">C {{ releaseDay(movie.releaseDate) }}</p>
+          <p v-if="!movie.releaseDate">{{ $t('nowInCinema') }}</p>
+          <p v-if="movie.releaseDate">{{ $t('since') }} {{ releaseDay(movie.releaseDate) }}</p>
           <div class="image">
             <img
               :src="getPick(movie.picture)"

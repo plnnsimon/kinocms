@@ -1,5 +1,8 @@
 {
     "buy": "Купить",
+    "nowInCinema": "Сейчас в кино",
+    "since": "С",
+    "cinemaTimeTable": "Расписание сеансов кинотеатра",
     "cinema": "Кинотеатр",
     "newsAndAdvertisement": "Новости и Акции",
     "watchToday": "Смотрите сегодня",
@@ -21,6 +24,16 @@
     "soonShawn": "Скоро покажут",
     "name": "Название",
     "timetable": "Расписание",
+    "noFilmsYet": "На эту дату пока нету фильмов ...",
+    "noMatchingFound": "Совпадений не найдено ...",
+    "timetableList": {
+        "halls": "Все залы",
+        "moviesAll": "Фильмы: все",
+        "time": "Время",
+        "movie": "Фильм",
+        "book": "Бронировать",
+        "price": "Цена"
+    },
     "poster": "Афиша",
     "sidebar": {
         "timetable": "Расписание",

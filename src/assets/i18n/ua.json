@@ -1,5 +1,8 @@
 {
     "buy": "Придбати",
+    "nowInCinema": "Зараз у кіно",
+    "cinemaTimeTable": "Розклад сеансів кінотеатру",
+    "since": "З",
     "cinema": "Кінотеатр",
     "newsAndAdvertisement": "Новини та Акції",
     "watchToday": "Дивіться сьогодні",
@@ -21,6 +24,16 @@
     "soonShawn": "Скоро покажуть",
     "name": "Назва",
     "timetable": "Розклад",
+    "noFilmsYet": "На цю дату поки немає фільмів ...",
+    "noMatchingFound": "Збігів не знайдено ...",
+    "timetableList": {
+        "halls": "Усі зали",
+        "moviesAll": "Фільми: усі",
+        "time": "Час",
+        "movie": "Фільм",
+        "book": "Забронювати",
+        "price": "Ціна"
+    },
     "poster": "Афіша",
     "sidebar": {
         "timetable": "Розклад",

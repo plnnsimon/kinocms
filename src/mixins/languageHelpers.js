@@ -1,15 +1,12 @@
-// import i18n from '../i18n'
 import firebase from 'firebase'
 export default {
     data() {
         return {
-            // lang: i18n.locale,
             timetable: []
         }
     },
     computed: {
         getLocale() {
-            console.log(this.lang);
             if (this.lang == 'ua') {
                 return `uk-${this.lang.toUpperCase()}`
             } else {
@@ -22,6 +19,14 @@ export default {
 
     },
     methods: {
+        filteredTimetable(time) {
+            let arr = this.timetable.filter(el => {
+                if (new Date(el.date).toLocaleString('uk-UA', { weekday: 'long' }) == time.weekday || new Date(el.date).toLocaleString('ru-RU', { weekday: 'long' }) == time.weekday) {
+                    return el
+                }
+            })
+            return arr
+        },
         getWeek(dayLength) {
             if (dayLength == '' || dayLength == undefined || dayLength == null) {
                 dayLength = 'long'
@@ -92,24 +97,37 @@ export default {
         getFilteredFilmsArray(timetable, time, selectedCinema, selectedHall, selectedMovie) {
             return timetable.filter(el => {
                 if (el.cinema == selectedCinema && el.hall != selectedHall && new Date(el.date).getDate() == time.day && selectedHall != '') {
+                    console.log('1');
                     return null
                 } else if (el.movie != selectedMovie && el.hall == selectedHall && el.cinema == selectedCinema && new Date(el.date).getDate() == time.day && selectedMovie != '') {
+                    console.log('2');
                     return null
-                } else if (el.movie == selectedMovie && el.hall == selectedHall && el.cinema == selectedCinema && new Date(el.date).getDate() == time.day) {
+                } else if (el.movie == selectedMovie && el.cinema == selectedCinema && new Date(el.date).getDate() == time.day) {
+                    console.log('11');
                     return el
-                } else if (el.cinema == selectedCinema && new Date(el.date).getDate() == time.day) {
+                } else if (el.movie == selectedMovie && el.hall == selectedHall && el.cinema == selectedCinema && new Date(el.date).getDate() == time.day) {
+                    console.log('3');
+                    return el
+                } else if (el.cinema == selectedCinema && new Date(el.date).getDate() == time.day && selectedMovie == '') {
+                    console.log('4');
                     return el
                 } else if (el.movie != selectedMovie && el.hall != selectedHall && el.cinema == selectedCinema && new Date(el.date).getDate() == time.day && selectedHall == '' && selectedMovie == '') {
+                    console.log('5');
                     return null
                 } else if (el.cinema != selectedCinema && el.hall == selectedHall && new Date(el.date).getDate() == time.day) {
+                    console.log('6');
                     return null
                 } else if (el.cinema == selectedCinema && el.hall == selectedHall && new Date(el.date).getDate() == time.day) {
+                    console.log('7');
                     return el
                 } else if (el.hall == selectedHall && new Date(el.date).getDate() == time.day) {
+                    console.log('8');
                     return el
-                } else if (el.movie == selectedMovie && new Date(el.date).getDate() == time.day) {
+                } else if (el.movie == selectedMovie && new Date(el.date).getDate() == time.day && selectedCinema == '') {
+                    console.log('9');
                     return el
                 } else if (el.movie != selectedMovie && new Date(el.date).getDate() == time.day && selectedCinema == '') {
+                    console.log('10');
                     return el
                 } else if (new Date(el.date).getDate() == time.day && selectedCinema == '' && selectedHall == '' && selectedMovie == '') {
                     return el

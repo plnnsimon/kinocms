@@ -3,7 +3,7 @@
     <div>
       
       <select name="" id="" v-model="selectedCinema">
-          <option value="">Кинотеатр</option>
+          <option value="">{{ $t('cinema') }}</option>
           <option
             v-for="cinema in cinemas"
             :key="cinema.cinemaId"
@@ -21,7 +21,7 @@
           </option>
         </select>
         <select name="" id="" v-model="selectedMovie">
-        <option value="">Фильм: все</option>
+        <option value="">{{ $t('timetableList.moviesAll') }}</option>
         <option
           v-for="movie in movies"
           :key="movie.filmId"
@@ -31,7 +31,7 @@
         </option>
       </select>
       <select name="" id="" v-model="selectedHall">
-          <option value="">Все залы</option>
+          <option value="">{{ $t('timetableList.halls') }}</option>
           <option
             v-for="(hall, index) in getCinemaHalls"
             :key="index"
@@ -47,11 +47,11 @@
       <table>
         <thead>
           <tr>
-            <td>Время</td>
-            <td>Фильм</td>
+            <td>{{ $t('timetableList.time') }}</td>
+            <td>{{ $t('timetableList.movie') }}</td>
             <td>Зал</td>
-            <td>Цена в грн.</td>
-            <td>Бронировать</td>
+            <td>{{ $t('timetableList.price') }} в грн.</td>
+            <td>{{ $t('timetableList.book') }}</td>
           </tr>
         </thead>
         <tbody>
@@ -64,11 +64,11 @@
           </tr>
         </tbody>
         <Spinner v-if="loading" />
-          <p v-if="filteredTimetable(time).length <= 0">
-            На эту дату пока нету фильмов ...
+          <p v-if="filteredTimetable(time).length <= 0 && !loading">
+            {{ $t('noFilmsYet') }}
           </p>
           <p v-if="getFilteredFilmsArray(timetable, time, selectedCinema, selectedHall, selectedMovie).length <= 0 && filteredTimetable(time).length > 0">
-            Совпадений не найдено ...
+            {{ $t('noMatchingFound') }}
           </p>
       </table>
     </div>
@@ -122,14 +122,6 @@ export default {
     await this.getTimetable()
   },
   methods: {
-    filteredTimetable(time) {
-      let arr = this.timetable.filter(el => {
-        if (new Date(el.date).toLocaleString('default', {weekday: 'long'}) == time.weekday) {
-          return el
-        }
-      })
-      return arr
-    },
     getMovie(id) {
       return this.movies.find((el) => el.filmId == id);
     },

@@ -14,7 +14,7 @@
     <div class="movie__time">
       <div class="time__top">
         <div>
-          <p>Расписание сеансов кинотеатра:</p>
+          <p>{{ $t("cinemaTimeTable") }}:</p>
           <select name="" id="" v-model="selectedCinema">
             <option value="">{{ $t("cinema") }}</option>
             <option
@@ -103,10 +103,10 @@
         <p
           v-if="
             getMovieTimetable(movie, selectedCinema, selectedDate, selectedType)
-              .length <= 0
+              .length <= 0 && !loading
           "
         >
-          На эту дату фильмов нету...
+         {{ $t("noFilmsYet") }}
         </p>
       </div>
     </div>
